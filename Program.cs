@@ -1,9 +1,12 @@
 ﻿using Ecommerce.Data;
 using Ecommerce.Models;
 using Ecommerce.Repositories.Account;
+using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
 using Ecommerce.Services;
 using Ecommerce.Services.Account;
+using Ecommerce.Services.JWT;
+using Ecommerce.Services.Mail;
 using Ecommerce.Services.Vaild;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -73,14 +76,21 @@ namespace Ecommerce
                 };
             });
 
-            //Đăng ký Repository
+
+            //== Repository Patten ==
+            //Repository
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IRankAccountRepository, RankAccountRepository>();
+            builder.Services.AddScoped<IOTPRepository, OTPRepository>();
 
-            //Đăng ký Service
+            //Service
             builder.Services.AddScoped<IVaildService, VaildService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<IJwtService, JwtService>();
             
+            //== Singleton Patten ==
+            //Service
+            builder.Services.AddSingleton<IMailService, MailService>();
 
             var app = builder.Build();
 
@@ -99,9 +109,12 @@ namespace Ecommerce
 
             app.UseRouting();
 
-            app.UseAuthorization();
-            app.UseAuthentication();
+            app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.MapControllers();
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

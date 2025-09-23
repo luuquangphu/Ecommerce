@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Data;
 using Ecommerce.Models;
+using Ecommerce.Services.JWT;
 using Ecommerce.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,16 +11,17 @@ namespace Ecommerce.Repositories.Account
 {
     public class AccountRepository : IAccountRepository
     {
-        private readonly UserManager<Users> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<Users> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+
 
         public AccountRepository(UserManager<Users> userManager, RoleManager<IdentityRole> roleManager)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
-        public async Task<(bool isSuccess, string Message)> CreateAsync(RegisterViewModel model, int rankId, string urlImage)
+        public async Task<(bool isSuccess, string Message)> CreateAccountAsync(RegisterViewModel model, int rankId, string urlImage)
         {
             var user = new Customer
             {
@@ -35,20 +37,39 @@ namespace Ecommerce.Repositories.Account
                 UserName = model.Email
             };
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description);
                 return (false, "Lỗi tạo tài khoản");
             }
 
-            if (!await _roleManager.RoleExistsAsync("User"))
+            if (!await roleManager.RoleExistsAsync("User"))
             {
-                await _roleManager.CreateAsync(new IdentityRole("User"));
+                await roleManager.CreateAsync(new IdentityRole("User"));
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await userManager.AddToRoleAsync(user, "User");
             return (true, "Tạo tài khoản thành công");
+        }
+
+        public async Task<(string userName, string role)> GetUserandRole(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) return ("", "");
+
+            //Phương thức này sẽ trả về các role của 1 user
+            var roles = await userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
+
+            if (role == null) return (user.Name, "");
+            return (user.Name, role);
+        }
+
+        public async Task<Users> FindUserByEmail(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            return user;
         }
     }
 }

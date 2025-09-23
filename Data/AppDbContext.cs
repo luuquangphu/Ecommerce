@@ -29,6 +29,7 @@ namespace Ecommerce.Data
         public DbSet<Discount_Customer> Discount_Customers { get; set; }
         public DbSet<FoodImage> FoodImages { get; set; }
         public DbSet<FoodSize> FoodSizes { get; set; }
+        public DbSet<OTP> OTPs { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -136,6 +137,12 @@ namespace Ecommerce.Data
                 .HasOne(o => o.Menu)
                 .WithMany()
                 .HasForeignKey(o => o.MenuId);
+
+            //== OTP ==
+            builder.Entity<OTP>()
+                .HasOne(o => o.Users)
+                .WithMany()
+                .HasForeignKey(o => o.UserId);
 
             base.OnModelCreating(builder);
         }
