@@ -10,5 +10,7 @@
         public Users Users { get; set; }
 
         public DateTime TimeCreate { get; set; }
+
+        public string Status { get; set; }
     }
 }

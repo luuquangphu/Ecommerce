@@ -1,4 +1,4 @@
-﻿using Ecommerce.Repositories.Account;
+﻿using Ecommerce.Repositories.AccountRepository;
 using Ecommerce.Services.Account;
 using Ecommerce.ViewModels;
 using Microsoft.AspNetCore.Http;

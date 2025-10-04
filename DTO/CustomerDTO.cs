@@ -1,0 +1,13 @@
+﻿namespace Ecommerce.DTO
+{
+    public class CustomerDTO
+    {
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public int Gender { get; set; }
+        public string? UrlImage { get; set; }
+        public string RankName { get; set; }
+    }
+}

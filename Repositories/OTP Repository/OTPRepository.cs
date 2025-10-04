@@ -26,6 +26,7 @@ namespace Ecommerce.Repositories.OTP
                     UserId = userId,
                     OTPCode = OTPCode,
                     TimeCreate = DateTime.Now,
+                    Status = "Chưa xác thực",
                 };
                 db.OTPs.Add(otpEntity);
             }
@@ -53,5 +54,27 @@ namespace Ecommerce.Repositories.OTP
             db.OTPs.Remove(otpITem);
             await db.SaveChangesAsync();
         } 
+
+        public async Task UpdateOTPStatus(string status, string userId)
+        {
+            var otpItem = db.OTPs.FirstOrDefault(otp => otp.UserId == userId);
+            if (otpItem != null)
+            {
+                otpItem.Status = status;
+                db.Update(otpItem);
+                await db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> CheckOTPStatus(string userId)
+        {
+            var otpItem = await db.OTPs.FirstOrDefaultAsync(otp => otp.UserId == userId);
+            if (otpItem != null)
+            {
+                if (otpItem.Status == "Success") return true;
+            }
+                
+            return false;
+        }
     }
 }

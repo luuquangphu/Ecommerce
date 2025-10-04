@@ -1,7 +1,7 @@
 ﻿using Ecommerce.Data;
 using Ecommerce.DTO;
 using Ecommerce.Models;
-using Ecommerce.Repositories.Account;
+using Ecommerce.Repositories.AccountRepository;
 using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
 using Ecommerce.Services.JWT;
@@ -57,8 +57,8 @@ namespace Ecommerce.Services.Account
             int rankId = await rankAccountRepository.SelectLastestRank();
 
             //Tạo tài khoản
-            var (isSuccess, Message) = await accountRepository.CreateAccountAsync(model, rankId, imagePath);
-            if (isSuccess == false)
+            var result = await accountRepository.CreateAccountAsync(model, rankId, imagePath, "User");
+            if (result.Succeeded == false)
             {
                 return (false, "Đăng ký thất bại");
             }
@@ -139,7 +139,7 @@ namespace Ecommerce.Services.Account
             if (otpItem.TimeCreate.AddMinutes(1) < nowUtc)     // quá 1 phút
                 return new VerifyOTPResult { IsSuccess = false, Message = "Mã OTP đã hết hạn" };
 
-            await otpRepository.DeleteOTP(model.UserId);
+            await otpRepository.UpdateOTPStatus("Success", model.UserId);
             return new VerifyOTPResult { IsSuccess = true, Message = "Xác thực OTP thành công", UserId=model.UserId};
         }
 
@@ -151,6 +151,10 @@ namespace Ecommerce.Services.Account
                 return new StatusDTO { IsSuccess = false, Message = "Không tìm thấy người dùng." };
             }
 
+            //Kiểm tra xem người dùng đã xác minh thành công OTP chưa
+            var resultOTP = await otpRepository.CheckOTPStatus(model.UserId);
+            if(resultOTP == false) return new StatusDTO {Message = "Chưa xác thực OTP", IsSuccess = false};
+
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
             var result = await userManager.ResetPasswordAsync(user, token, model.NewPassword);
 
@@ -160,6 +164,7 @@ namespace Ecommerce.Services.Account
                 return new StatusDTO { IsSuccess = false, Message = errors };
             }
 
+            await otpRepository.DeleteOTP(model.UserId);
             await signInManager.SignOutAsync();
             return new StatusDTO { IsSuccess = true, Message = "Thay đổi mật khẩu thành công" };
         }

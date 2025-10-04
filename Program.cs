@@ -1,10 +1,14 @@
 ﻿using Ecommerce.Data;
 using Ecommerce.Models;
-using Ecommerce.Repositories.Account;
+using Ecommerce.Repositories.AccountRepository;
+using Ecommerce.Repositories.CustomerRepository;
+using Ecommerce.Repositories.EmployeeRepository;
 using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
 using Ecommerce.Services;
 using Ecommerce.Services.Account;
+using Ecommerce.Services.Customer;
+using Ecommerce.Services.EmployeeService;
 using Ecommerce.Services.JWT;
 using Ecommerce.Services.Mail;
 using Ecommerce.Services.Vaild;
@@ -82,12 +86,17 @@ namespace Ecommerce
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IRankAccountRepository, RankAccountRepository>();
             builder.Services.AddScoped<IOTPRepository, OTPRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             //Service
             builder.Services.AddScoped<IVaildService, VaildService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
-            
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
+
             //== Singleton Patten ==
             //Service
             builder.Services.AddSingleton<IMailService, MailService>();
