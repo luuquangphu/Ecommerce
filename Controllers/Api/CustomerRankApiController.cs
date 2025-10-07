@@ -30,7 +30,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] CustomerRank model)
+        public async Task<IActionResult> Create([FromBody] CustomerRank model)
         {
             if (model == null) return NotFound();
 
@@ -39,11 +39,11 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update([FromForm] CustomerRank model)
+        public async Task<IActionResult> Update([FromBody] CustomerRank model)
         {
             if(model == null) return NotFound();
-            await rankAccountService.UpdateAsync(model);
-            return Ok();
+            var result = await rankAccountService.UpdateAsync(model);
+            return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
         }
     }
 }

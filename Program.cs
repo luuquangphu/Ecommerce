@@ -6,6 +6,7 @@ using Ecommerce.Repositories.EmployeeRepository;
 using Ecommerce.Repositories.MenuCategoryRepository;
 using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
+using Ecommerce.Repositories.TableRepository;
 using Ecommerce.Services;
 using Ecommerce.Services.Account;
 using Ecommerce.Services.Customer;
@@ -14,6 +15,7 @@ using Ecommerce.Services.JWT;
 using Ecommerce.Services.Mail;
 using Ecommerce.Services.MenuCategoryService;
 using Ecommerce.Services.RankAccount;
+using Ecommerce.Services.TableService;
 using Ecommerce.Services.Vaild;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -93,6 +95,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             builder.Services.AddScoped<IMenuCategoryRepository, MenuCategoryRepository>();
             builder.Services.AddScoped<IRankAccountRepository, RankAccountRepository>();
+            builder.Services.AddScoped<ITableRepository, TableRepository>();
             
             //Service
             builder.Services.AddScoped<IVaildService, VaildService>();
@@ -102,6 +105,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IMenuCategoryService, MenuCategoryService>();
             builder.Services.AddScoped<IRankAccountService, RankAccountService>();
+            builder.Services.AddScoped<ITableService, TableService>();
 
 
             //== Singleton Patten ==

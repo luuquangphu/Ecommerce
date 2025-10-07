@@ -9,7 +9,7 @@ namespace Ecommerce.Models
         public int TableId { get; set; }
 
         [DisplayName("Vị trí bàn")]
-        [Required(ErrorMessage = "Không được để trống chỗ ngồi")]
+        [Required(ErrorMessage = "Không được để trống tên bàn")]
         public string TableName { get; set; }
 
         [DisplayName("Số ghế")]

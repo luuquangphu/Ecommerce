@@ -39,6 +39,8 @@ namespace Ecommerce.Services.MenuCategoryService
 
         public async Task<StatusDTO> UpdateAsync(MenuCategory model)
         {
+            if (model.MenuCategoryId <= 0)
+                return new StatusDTO { IsSuccess = false, Message = "Mã hạng không hợp lệ" };
             var item = await menuCategoryRepository.UpdateAsync(model);
             if (item == false) return new StatusDTO { IsSuccess = false, Message = "Cập nhật không thành công" };
 

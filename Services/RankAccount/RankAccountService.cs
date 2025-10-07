@@ -35,6 +35,8 @@ namespace Ecommerce.Services.RankAccount
 
         public async Task<StatusDTO> UpdateAsync(CustomerRank model)
         {
+            if(model.RankId <= 0) 
+                return new StatusDTO { IsSuccess = false, Message = "Mã hạng không hợp lệ" };
             var customerRank = await rankAccountRepository.GetByIdAsync(model.RankId);
             if (customerRank == null)
                 return new StatusDTO { IsSuccess = false, Message = "Không tìm thấy hạng cần xóa" };
