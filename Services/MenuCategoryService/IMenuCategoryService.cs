@@ -5,10 +5,10 @@ namespace Ecommerce.Services.MenuCategoryService
 {
     public interface IMenuCategoryService
     {
-        Task<MenuCategory> GetByIdAsync(string id);
+        Task<MenuCategory> GetByIdAsync(int id);
         Task<IEnumerable<MenuCategory>> GetAllAsync();
         Task<StatusDTO> CreateAsync(MenuCategory model);
         Task<StatusDTO> UpdateAsync(MenuCategory model);
-        Task<StatusDTO> DeleteAsync(string id);
+        Task<StatusDTO> DeleteAsync(int id);
     }
 }

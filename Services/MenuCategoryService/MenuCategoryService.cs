@@ -21,8 +21,9 @@ namespace Ecommerce.Services.MenuCategoryService
             return new StatusDTO {IsSuccess = true, Message = "Tạo thành công"};
         }
 
-        public async Task<StatusDTO> DeleteAsync(string id)
+        public async Task<StatusDTO> DeleteAsync(int id)
         {
+            if (id == 0) return new StatusDTO { IsSuccess = false, Message = "Id không hợp lệ" };
             var check = await menuCategoryRepository.HasMenuInCategoryAsync(id);
             if (check == true) return new StatusDTO { IsSuccess = false, 
                 Message = "Không thể xóa loại món ăn vì có món đã có loại món ăn này" };
@@ -34,7 +35,7 @@ namespace Ecommerce.Services.MenuCategoryService
 
         public async Task<IEnumerable<MenuCategory>> GetAllAsync() => await menuCategoryRepository.GetAllAsync();
 
-        public async Task<MenuCategory> GetByIdAsync(string id) => await menuCategoryRepository.GetByIdAsync(id);
+        public async Task<MenuCategory> GetByIdAsync(int id) => await menuCategoryRepository.GetByIdAsync(id);
 
         public async Task<StatusDTO> UpdateAsync(MenuCategory model)
         {

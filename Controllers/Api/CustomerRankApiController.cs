@@ -1,0 +1,49 @@
+﻿using Ecommerce.Models;
+using Ecommerce.Services.RankAccount;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Ecommerce.Controllers.Api
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CustomerRankApiController : ControllerBase
+    {
+        private readonly IRankAccountService rankAccountService;
+        public CustomerRankApiController(IRankAccountService rankAccountService) 
+        {
+            this.rankAccountService = rankAccountService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var lst = await rankAccountService.GetAllAsync();
+            return Ok(lst);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await rankAccountService.DeleteAsync(id);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm] CustomerRank model)
+        {
+            if (model == null) return NotFound();
+
+            var result = await rankAccountService.CreateAsync(model);
+            return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromForm] CustomerRank model)
+        {
+            if(model == null) return NotFound();
+            await rankAccountService.UpdateAsync(model);
+            return Ok();
+        }
+    }
+}

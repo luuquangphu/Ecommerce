@@ -20,7 +20,7 @@ namespace Ecommerce.Models
 
 
         [Required(ErrorMessage = "Vui lòng chọn loại món ăn!")]
-        public string MenuCategoryId { get; set; }
+        public int MenuCategoryId { get; set; }
         public MenuCategory MenuCategory { get; set; }   
     }
 }

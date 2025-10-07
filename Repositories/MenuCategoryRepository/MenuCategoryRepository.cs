@@ -27,7 +27,7 @@ namespace Ecommerce.Repositories.MenuCategoryRepository
             return item;
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<bool> DeleteAsync(int id)
         {
             var item = await GetByIdAsync(id);
             if(item == null) return false;
@@ -44,7 +44,7 @@ namespace Ecommerce.Repositories.MenuCategoryRepository
             return lst;
         }
 
-        public async Task<MenuCategory> GetByIdAsync(string id)
+        public async Task<MenuCategory> GetByIdAsync(int id)
         {
             var item = await db.MenuCategories.FindAsync(id);
             return item;
@@ -61,7 +61,7 @@ namespace Ecommerce.Repositories.MenuCategoryRepository
             return true;
         }
 
-        public async Task<bool> HasMenuInCategoryAsync(string categoryId)
+        public async Task<bool> HasMenuInCategoryAsync(int categoryId)
         {
             return await db.Menus.AnyAsync(m => m.MenuCategoryId == categoryId);
         }

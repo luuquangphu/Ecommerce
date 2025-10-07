@@ -5,12 +5,12 @@ namespace Ecommerce.Repositories.MenuCategoryRepository
 {
     public interface IMenuCategoryRepository
     {
-        Task<MenuCategory> GetByIdAsync(string id);
+        Task<MenuCategory> GetByIdAsync(int id);
         Task<IEnumerable<MenuCategory>> GetAllAsync();
         Task<MenuCategory> CreateAsync(MenuCategory model);
         Task<bool> UpdateAsync(MenuCategory model);
-        Task<bool> DeleteAsync(string id);
+        Task<bool> DeleteAsync(int id);
 
-        Task<bool> HasMenuInCategoryAsync(string categoryId);
+        Task<bool> HasMenuInCategoryAsync(int categoryId);
     }
 }

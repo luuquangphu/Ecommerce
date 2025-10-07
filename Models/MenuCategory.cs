@@ -8,7 +8,7 @@ namespace Ecommerce.Models
     {
         [Key]
         [DisplayName("Mã loai ")]
-        public string MenuCategoryId { get; set; }
+        public int MenuCategoryId { get; set; }
 
         [Required(ErrorMessage = "Tên loại không được để trống")]
         public string MenuCategoryName { get; set; }

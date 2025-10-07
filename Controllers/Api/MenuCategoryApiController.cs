@@ -24,7 +24,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(string id)
+        public async Task<IActionResult> GetById(int id)
         {
             var item = await menuCategoryService.GetByIdAsync(id);
             if (item == null)
@@ -54,7 +54,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int id)
         {
             var result = await menuCategoryService.DeleteAsync(id);
             return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
