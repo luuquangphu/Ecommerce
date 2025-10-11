@@ -22,5 +22,7 @@ namespace Ecommerce.Models
         public string TableStatus { get; set; }
 
         public string? QRCodePath { get; set; }
+
+        public string? OwnerTable { get; set; }
     }
 }

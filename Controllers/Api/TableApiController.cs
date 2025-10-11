@@ -49,5 +49,20 @@ namespace Ecommerce.Controllers.Api
             var result = await tableService.Delete(id);
             return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
         }
+
+        [HttpGet("CreateQR")]
+        public async Task<IActionResult> CreateQR(int tableId)
+        {
+            var result = await tableService.CreateQRTable(tableId);
+            return result.IsSuccess ? Ok(result.Message) : BadRequest(result.Message);
+        }
+
+        [HttpGet("ValidTableToken")]
+        public async Task<IActionResult> ValidTableToken(string token)
+        {
+            var result = await tableService.ValidTableToken(token, User);
+            return result.IsValid ? Ok(result.Message) : BadRequest(result.Message);
+        }
+
     }
 }

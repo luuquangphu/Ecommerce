@@ -114,5 +114,12 @@ namespace Ecommerce.Services.Vaild
             }
             return false;
         }
+
+        public bool checkPhone(string Phone)
+        {
+            var check = appDbContext.Customers.FirstOrDefault(c => c.PhoneNumber == Phone);
+            if(check != null) return true;
+            return false;
+        }
     }
 }

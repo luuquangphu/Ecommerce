@@ -6,5 +6,6 @@
         string RemoveDiacritics(string text);
         bool KiemTraNgaySinh(DateTime? ngaySinh, out string errorMessage);
         bool checkEmail(string Email);
+        bool checkPhone(string Phone);
     }
 }

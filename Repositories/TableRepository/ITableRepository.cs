@@ -10,5 +10,8 @@ namespace Ecommerce.Repositories.TableRepository
         Task Update(Table model);
         Task Delete(int id);
 
+        Task UpdateTableOwner(string? userId, int tableId);
+        Task<string> ValidTableName(string tableName);
+
     }
 }

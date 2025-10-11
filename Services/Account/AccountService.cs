@@ -44,6 +44,9 @@ namespace Ecommerce.Services.Account
             if (!vaildService.checkEmail(model.Email))
                 return (false, "Email đã tồn tại.");
 
+            if (vaildService.checkPhone(model.PhoneNumber))
+                return (false, "Số điện thoại đã tồn tại vui lòng sử dụng Quên mật khẩu để lấy lại tài khoản");
+
             //Nếu không gán ảnh thì chọn ảnh mặc định lưu trong hệ thống
             var imagePath = string.IsNullOrEmpty(model.UrlImage)
             ? "/Image/GuestUser/GuestUser.jpg"

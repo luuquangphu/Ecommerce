@@ -2,6 +2,7 @@
 using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Ecommerce.Repositories.TableRepository
 {
     public class TableRepository : ITableRepository
@@ -52,8 +53,28 @@ namespace Ecommerce.Repositories.TableRepository
             table.TableName = model.TableName;
             table.TableStatus = model.TableStatus;
             table.NumberOfSeats = model.NumberOfSeats;
+            if (model.TableStatus == "Trống")
+                table.OwnerTable = "";
+            table.OwnerTable = model.OwnerTable;
 
             await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateTableOwner(string? userId, int tableId)
+        {
+            var table = await GetById(tableId);
+
+            table.OwnerTable = userId;
+            table.TableStatus = "Đang sử dụng";
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task<string> ValidTableName(string tableName)
+        {
+            var check = await db.Tables.FirstOrDefaultAsync(t => t.TableName == tableName);
+            if (check != null) return "Tên bàn bị trùng";
+            return "";
         }
     }
 }
