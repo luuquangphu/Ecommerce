@@ -8,7 +8,7 @@ namespace Ecommerce.Models
     {
         [Key]
         [DisplayName("Mã món ăn")]
-        public string MenuId { get; set; }
+        public int MenuId { get; set; }
 
         [DisplayName("Tên món ăn")]
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Tên món ăn phải từ 5 đến 100 ký tự!")]

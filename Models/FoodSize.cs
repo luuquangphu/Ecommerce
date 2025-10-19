@@ -9,7 +9,7 @@ namespace Ecommerce.Models
     {
         public int FoodSizeId { get; set; }
 
-        public string MenuId { get; set; }
+        public int MenuId { get; set; }
         public Menu Menu { get; set; }
 
         public string FoodName { get; set; }// S,M,L

@@ -4,6 +4,7 @@ using Ecommerce.Repositories.AccountRepository;
 using Ecommerce.Repositories.CustomerRepository;
 using Ecommerce.Repositories.EmployeeRepository;
 using Ecommerce.Repositories.MenuCategoryRepository;
+using Ecommerce.Repositories.MenuRepository;
 using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
 using Ecommerce.Repositories.TableRepository;
@@ -97,6 +98,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IMenuCategoryRepository, MenuCategoryRepository>();
             builder.Services.AddScoped<IRankAccountRepository, RankAccountRepository>();
             builder.Services.AddScoped<ITableRepository, TableRepository>();
+            builder.Services.AddScoped<IMenuRepository, MenuRepository>();
             
             //Service
             builder.Services.AddScoped<IVaildService, VaildService>();

@@ -118,6 +118,8 @@ namespace Ecommerce.Services.TableService
             var table = await tableRepository.GetById(model.TableId);
             if (table == null)
                 return new StatusDTO { IsSuccess = false, Message = "Không tìm thấy bàn cần cập nhật" };
+            if (model.NumberOfSeats <= 0)
+                return new StatusDTO { IsSuccess = false, Message = "Chỗ ngồi không thể nhỏ hơn hoặc bằng 0" };
             await tableRepository.Update(model);
             return new StatusDTO { IsSuccess = true, Message = $"Cập nhật bàn: {model.TableName} thành công" };
         }
