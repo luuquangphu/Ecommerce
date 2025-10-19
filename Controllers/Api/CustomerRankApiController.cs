@@ -1,5 +1,6 @@
 ﻿using Ecommerce.Models;
 using Ecommerce.Services.RankAccount;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class CustomerRankApiController : ControllerBase
     {
         private readonly IRankAccountService rankAccountService;

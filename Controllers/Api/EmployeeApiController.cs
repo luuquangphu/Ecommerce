@@ -1,12 +1,14 @@
 ﻿using Ecommerce.Models;
 using Ecommerce.Services.EmployeeService;
 using Ecommerce.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class EmployeeApiController : ControllerBase
     {
         private readonly IEmployeeService employeeService;

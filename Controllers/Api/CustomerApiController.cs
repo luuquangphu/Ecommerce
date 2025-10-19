@@ -1,6 +1,7 @@
 ﻿using Ecommerce.DTO;
 using Ecommerce.Services.Customer;
 using Ecommerce.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class CustomerApiController : ControllerBase
     {
         private readonly ICustomerService customerService;
@@ -37,6 +39,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPut("UpdateCustomer")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> UpdateCustomer(string userId, [FromForm] UpdateCustomerViewModel model, IFormFile? UrlImage)
         {
             var result = await customerService.Update(model, userId, UrlImage);

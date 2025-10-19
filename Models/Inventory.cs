@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Ecommerce.Models
 {
@@ -9,11 +10,11 @@ namespace Ecommerce.Models
         public int InventoryId { get; set; }
 
         public int FoodSizeId { get; set; }
+        [ValidateNever]
         public FoodSize FoodSize { get; set; }
 
         public string Unit { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "Số lượng không được là 1 số âm và lớn hơn 0.")]
         public int Quantity { get; set; }
     }
 }
