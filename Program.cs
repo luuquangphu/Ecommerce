@@ -15,6 +15,7 @@ using Ecommerce.Services.EmployeeService;
 using Ecommerce.Services.JWT;
 using Ecommerce.Services.Mail;
 using Ecommerce.Services.MenuCategoryService;
+using Ecommerce.Services.MenuService;
 using Ecommerce.Services.QRImageService;
 using Ecommerce.Services.RankAccount;
 using Ecommerce.Services.TableService;
@@ -110,7 +111,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IRankAccountService, RankAccountService>();
             builder.Services.AddScoped<ITableService, TableService>();
             builder.Services.AddScoped<IQrImageService, QrImageService>();
-
+            builder.Services.AddScoped<IMenuService, MenuService>();
 
             //== Singleton Patten ==
             //Service

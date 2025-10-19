@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Ecommerce.Models
 {
@@ -21,6 +22,7 @@ namespace Ecommerce.Models
 
         [Required(ErrorMessage = "Vui lòng chọn loại món ăn!")]
         public int MenuCategoryId { get; set; }
+        [ValidateNever]
         public MenuCategory MenuCategory { get; set; }   
     }
 }

@@ -14,35 +14,62 @@ namespace Ecommerce.Services.MenuService
             this.menuRepository = menuRepository;
         }
 
+        public async Task<IEnumerable<MenuViewModel>> GetAll()
+        {
+            return await menuRepository.GetAll();
+        }
+
+        public async Task<MenuViewModel> GetById(int id)
+        {
+            return await menuRepository.GetById(id);
+        }
+
         public async Task<StatusDTO> Create(Menu model)
         {
+            // kiểm tra trùng tên
             var checkName = await menuRepository.ValidName(model.MenuName);
-            if(checkName != null) 
-                return new StatusDTO { IsSuccess = false, Message = "Tên món bị trùng" };
+            if (!string.IsNullOrEmpty(checkName))
+                return new StatusDTO { IsSuccess = false, Message = checkName };
+
             await menuRepository.Create(model);
-            return new StatusDTO { IsSuccess = true, Message = $"Tạo món {model.MenuName} thành công" };
+            return new StatusDTO
+            {
+                IsSuccess = true,
+                Message = $"Tạo món {model.MenuName} thành công"
+            };
         }
 
-        public Task<StatusDTO> Delete(int id)
+        public async Task<StatusDTO> Update(Menu model)
         {
-            throw new NotImplementedException();
+            var checkName = await menuRepository.ValidName(model.MenuName);
+            if (!string.IsNullOrEmpty(checkName))
+            {
+                // Nếu trùng tên, cần đảm bảo món trùng đó không phải chính món đang cập nhật
+                var current = await menuRepository.GetById(model.MenuId);
+                if (current != null && current.MenuName != model.MenuName)
+                    return new StatusDTO { IsSuccess = false, Message = "Tên món ăn bị trùng" };
+            }
+
+            await menuRepository.Update(model);
+            return new StatusDTO
+            {
+                IsSuccess = true,
+                Message = $"Cập nhật món {model.MenuName} thành công"
+            };
         }
 
-        public Task<IEnumerable<MenuViewModel>> GetAll()
+        public async Task<StatusDTO> Delete(int id)
         {
-            var lstMenu = menuRepository.GetAll();
-            return lstMenu;
-        }
+            var menu = await menuRepository.GetById(id);
+            if (menu == null)
+                return new StatusDTO { IsSuccess = false, Message = "Không tìm thấy món ăn cần xóa" };
 
-        public Task<MenuViewModel> GetById(int id)
-        {
-            var menu = menuRepository.GetById(id);
-            return menu;
-        }
-
-        public Task<StatusDTO> Update(Menu model)
-        {
-            throw new NotImplementedException();
+            await menuRepository.Delete(id);
+            return new StatusDTO
+            {
+                IsSuccess = true,
+                Message = $"Xóa món {menu.MenuName} thành công"
+            };
         }
     }
 }
