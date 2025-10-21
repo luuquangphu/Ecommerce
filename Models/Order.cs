@@ -7,7 +7,7 @@ namespace Ecommerce.Models
     public class Order
     {
         [Key]
-        public string OrderId { get; set; }
+        public int OrderId { get; set; }
 
         [DisplayName("Tổng tiền")]
         [Column(TypeName = "decimal(37,1)")]

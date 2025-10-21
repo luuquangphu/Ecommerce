@@ -1,0 +1,16 @@
+﻿using Ecommerce.DTO;
+using Ecommerce.Models;
+using System.Security.Claims;
+
+namespace Ecommerce.Repositories.CartRepository
+{
+    public interface ICartRepository
+    {
+        Task Create(Cart model);
+        Task AddToCart(int foodsizeId, int cartId);
+        Task RemoveToCart(int foodsizeId, int cartId);
+        Task<IEnumerable<CartItemDTO>> getCartItem(string userId);
+        Task<Cart> GetById(int id);
+        Task<(int,decimal)> GetQuantityCartItem(string userId);
+    }
+}

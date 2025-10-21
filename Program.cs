@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Data;
 using Ecommerce.Models;
 using Ecommerce.Repositories.AccountRepository;
+using Ecommerce.Repositories.CartRepository;
 using Ecommerce.Repositories.CustomerRepository;
 using Ecommerce.Repositories.EmployeeRepository;
 using Ecommerce.Repositories.FoodSizeRepository;
@@ -12,6 +13,7 @@ using Ecommerce.Repositories.RankAccount;
 using Ecommerce.Repositories.TableRepository;
 using Ecommerce.Services;
 using Ecommerce.Services.Account;
+using Ecommerce.Services.CartService;
 using Ecommerce.Services.Customer;
 using Ecommerce.Services.EmployeeService;
 using Ecommerce.Services.FoodSizeService;
@@ -106,6 +108,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IMenuRepository, MenuRepository>();
             builder.Services.AddScoped<IFoodSizeRepository, FoodSizeRepository>();
             builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
 
             //Service
             builder.Services.AddScoped<IVaildService, VaildService>();
@@ -120,6 +123,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IMenuService, MenuService>();
             builder.Services.AddScoped<IFoodSizeService, FoodSizeService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
+            builder.Services.AddScoped<ICartService, CartService>();
 
             //== Singleton Patten ==
             //Service

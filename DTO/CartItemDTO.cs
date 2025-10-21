@@ -1,19 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-using System;
 
-namespace Ecommerce.Models
+namespace Ecommerce.DTO
 {
-    public class CartDetails
+    public class CartItemDTO
     {
         public int FoodSizeId { get; set; }
-        public FoodSize FoodSize { get; set; }
 
         public int CartId { get; set; }
-        public Cart Cart { get; set; }
 
-        [DisplayName("Số lượng")]
+        public string MenuName { get; set; }
+
+        public string FoodSizeName  { get; set; }
+
         [Range(1, int.MaxValue, ErrorMessage = "Số lượng không được là 1 số âm và lớn hơn 0.")]
         public int Count { get; set; }
+
+        public decimal Price { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }

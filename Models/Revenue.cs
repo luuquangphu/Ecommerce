@@ -4,7 +4,7 @@ namespace Ecommerce.Models
 {
     public class Revenue
     {
-        public string RevenueId { get; set; }
+        public int RevenueId { get; set; }
         public DateTime Date { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }

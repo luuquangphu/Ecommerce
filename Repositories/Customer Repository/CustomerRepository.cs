@@ -72,7 +72,7 @@ namespace Ecommerce.Repositories.CustomerRepository
 
         public async Task<bool> IsCustomerCart(string userId)
         {
-            var hasOrders = await db.Cart_Menus.AnyAsync(c => c.CartId == userId);
+            var hasOrders = await db.Carts.AnyAsync(c => c.CustomerId == userId);
 
             //Nếu có đơn hàng return true
             if (hasOrders) return true;
@@ -94,6 +94,7 @@ namespace Ecommerce.Repositories.CustomerRepository
             var lstCustomer = await query
                 .Select(c => new CustomerDTO
                 {
+                    CustomerId = c.Id,
                     Name = c.Name,
                     Email = c.Email,
                     PhoneNumber = c.PhoneNumber,

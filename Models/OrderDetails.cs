@@ -9,7 +9,7 @@ namespace Ecommerce.Models
         public int FoodSizeId { get; set; }
         public FoodSize FoodSize { get; set; }
 
-        public string OrderId { get; set; }
+        public int OrderId { get; set; }
         public Order Order { get; set; }
 
         [DisplayName("Số lượng")]
