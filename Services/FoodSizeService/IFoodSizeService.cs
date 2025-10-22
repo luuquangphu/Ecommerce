@@ -11,5 +11,7 @@ namespace Ecommerce.Services.FoodSizeService
         Task<StatusDTO> Create(FoodSize model);
         Task<StatusDTO> Update(FoodSize model);
         Task<StatusDTO> Delete(int id);
+        Task<IEnumerable<FoodSizeViewModel>> Search(string? keyword);
+
     }
 }

@@ -23,11 +23,18 @@ namespace Ecommerce.Controllers.Api
         // GET: api/FoodSizeApi
         // ===========================
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? search)
         {
-            var result = await foodsizeService.GetAll();
-            return Ok(result);
+            if (!string.IsNullOrEmpty(search))
+            {
+                var result = await foodsizeService.Search(search);
+                return Ok(result);
+            }
+
+            var all = await foodsizeService.GetAll();
+            return Ok(all);
         }
+
 
         // ===========================
         // POST: api/FoodSizeApi

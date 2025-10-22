@@ -24,6 +24,13 @@ namespace Ecommerce.Services.FoodSizeService
         {
             return await foodsizeRepository.GetAll();
         }
+        // =====================================
+        // SEARCH
+        // =====================================
+        public async Task<IEnumerable<FoodSizeViewModel>> Search(string? keyword)
+        {
+            return await foodsizeRepository.Search(keyword);
+        }
 
         // =====================================
         // GET BY ID

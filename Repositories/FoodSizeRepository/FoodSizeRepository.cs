@@ -32,6 +32,33 @@ namespace Ecommerce.Repositories.FoodSizeRepository
 
             return lstFoodSize;
         }
+        // =====================================
+        // SEARCH - Tìm kiếm theo tên món ăn hoặc kích cỡ
+        // =====================================
+        public async Task<IEnumerable<FoodSizeViewModel>> Search(string? keyword)
+        {
+            var query = db.FoodSizes
+                .Include(fs => fs.Menu)
+                .Select(fs => new FoodSizeViewModel
+                {
+                    FoodSizeId = fs.FoodSizeId,
+                    MenuName = fs.Menu.MenuName,
+                    FoodName = fs.FoodName,
+                    Price = fs.Price,
+                    SortOrder = fs.SortOrder
+                });
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                query = query.Where(fs =>
+                    fs.MenuName.Contains(keyword) ||
+                    fs.FoodName.Contains(keyword));
+            }
+
+            // Giới hạn trả về 20 bản ghi để tránh quá tải
+            return await query.Take(20).ToListAsync();
+        }
+
 
         // =====================================
         // GET BY ID
