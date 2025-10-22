@@ -10,5 +10,7 @@ namespace Ecommerce.Repositories.InventoryRepository
         Task Create(Inventory model);
         Task Update(Inventory model);
         Task Delete(int id);
+        Task<IEnumerable<InventoryViewModel>> Search(string keyword);
+
     }
 }
