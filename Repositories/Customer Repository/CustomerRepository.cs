@@ -100,7 +100,9 @@ namespace Ecommerce.Repositories.CustomerRepository
                     PhoneNumber = c.PhoneNumber,
                     Gender = c.Gender,
                     DateOfBirth = c.DateOfBirth,
-                    RankName = c.CustomerRank.RankName
+                    RankName = c.CustomerRank.RankName,
+                    UrlImage = c.UrlImage,
+                    Point = c.Point
                 })
                 .ToListAsync();
 
