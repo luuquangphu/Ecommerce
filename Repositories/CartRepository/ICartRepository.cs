@@ -12,5 +12,6 @@ namespace Ecommerce.Repositories.CartRepository
         Task<IEnumerable<CartItemDTO>> getCartItem(string userId);
         Task<Cart> GetById(int id);
         Task<(int,decimal)> GetQuantityCartItem(string userId);
+        Task<Cart?> GetActiveCartByUserIdAsync(string userId);
     }
 }

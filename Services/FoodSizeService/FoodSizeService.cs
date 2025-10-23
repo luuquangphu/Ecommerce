@@ -42,11 +42,6 @@ namespace Ecommerce.Services.FoodSizeService
             if (model.Price < 0)
                 return new StatusDTO { IsSuccess = false, Message = "Giá bán không được âm" };
 
-            // 2️⃣ Kiểm tra tên trùng
-            var checkName = await foodsizeRepository.ValidName(model.FoodName);
-            if (!string.IsNullOrEmpty(checkName))
-                return new StatusDTO { IsSuccess = false, Message = checkName };
-
             // 3️⃣ Kiểm tra Menu tồn tại
             var menu = await menuRepository.GetById(model.MenuId);
             if (menu == null)
@@ -79,11 +74,6 @@ namespace Ecommerce.Services.FoodSizeService
             // 3️⃣ Kiểm tra giá bán
             if (model.Price < 0)
                 return new StatusDTO { IsSuccess = false, Message = "Giá bán không được âm" };
-
-            // 4️⃣ Kiểm tra trùng tên (và không phải chính món này)
-            var checkName = await foodsizeRepository.ValidName(model.FoodName);
-            if (!string.IsNullOrEmpty(checkName) && current.FoodName != model.FoodName)
-                return new StatusDTO { IsSuccess = false, Message = "Tên biến thể bị trùng" };
 
             // 5️⃣ Cập nhật
             await foodsizeRepository.Update(model);

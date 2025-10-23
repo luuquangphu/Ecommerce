@@ -50,6 +50,8 @@ namespace Ecommerce.Services.Customer
                     DateOfBirth = customerItem.DateOfBirth,
                     UrlImage = customerItem.UrlImage,
                     RankName = customerItem.CustomerRank.RankName,
+                    RankId = customerItem.RankId,
+                    Point = customerItem.Point,
                 }
             };
         }

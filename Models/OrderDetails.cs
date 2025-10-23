@@ -1,15 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace Ecommerce.Models
 {
     public class OrderDetails
     {
         public int FoodSizeId { get; set; }
+        [ValidateNever]
         public FoodSize FoodSize { get; set; }
 
         public int OrderId { get; set; }
+        [ValidateNever]
         public Order Order { get; set; }
 
         [DisplayName("Số lượng")]

@@ -1,0 +1,25 @@
+﻿using Ecommerce.Models;
+
+namespace Ecommerce.Repositories.OrderRepository
+{
+    public interface IOrderRepository
+    {
+        
+        Task<Order?> GetById(int orderId);
+
+        //Hàm để hiện đơn hàng phía nhà hàng
+        Task<IEnumerable<Order>> GetAllOrderAsync();
+
+        //Hiện thông tin chi tiết của 1 đơn phía nhà hàng
+        Task<Order?> GetOrderDetailsByIdAsync(int orderId);
+
+        //Hàm cập nhật OrderStatus(Trạng thái đơn hàng) phía bếp
+        Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
+
+        //Hàm yêu cầu thanh toán
+        Task<bool> RequestPaymentAsync(int orderId);
+
+        //Hàm để người dùng lấy danh sách đơn hàng cùng chi tiết đơn của họ
+        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string customerId);
+    }
+}

@@ -102,7 +102,8 @@ namespace Ecommerce.Repositories.CustomerRepository
                     DateOfBirth = c.DateOfBirth,
                     RankName = c.CustomerRank.RankName,
                     UrlImage = c.UrlImage,
-                    Point = c.Point
+                    Point = c.Point,
+                    RankId = c.RankId,
                 })
                 .ToListAsync();
 
@@ -127,7 +128,7 @@ namespace Ecommerce.Repositories.CustomerRepository
                 customer.Email = model.Email;
                 customer.DateOfBirth = model.DateOfBirth;
                 customer.Gender = model.Gender;
-                customer.RankId = model.RankId;
+                
 
                 if (customer.Point != model.Point)
                 {
