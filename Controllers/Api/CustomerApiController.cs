@@ -9,7 +9,7 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class CustomerApiController : ControllerBase
     {
         private readonly ICustomerService customerService;
@@ -18,7 +18,7 @@ namespace Ecommerce.Controllers.Api
         {
             this.customerService = customerService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllCustomer")]
         public async Task<IActionResult> GetAllCustomer(string? search = null)
         {
@@ -27,6 +27,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet("GetCustomerById")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetCustomerById(string userId)
         {
             var customer = await customerService.GetById(userId);

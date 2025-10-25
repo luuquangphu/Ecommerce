@@ -24,12 +24,44 @@ namespace Ecommerce.Repositories.RankAccount
             };
             db.CustomerRanks.Add(customerRank);
             await db.SaveChangesAsync();
+            // Sau khi thêm hạng mới, cập nhật lại toàn bộ hạng của khách hàng
+            await UpdateCustomerRanksByPoint();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var customerRank = await db.CustomerRanks.FindAsync(id);
-            db.CustomerRanks.Remove(customerRank);
+            //var customerRank = await db.CustomerRanks.FindAsync(id);
+            //db.CustomerRanks.Remove(customerRank);
+            //await db.SaveChangesAsync();
+            var rankToDelete = await db.CustomerRanks.FindAsync(id);
+            if (rankToDelete == null)
+                throw new Exception("Không tìm thấy hạng cần xóa");
+            var customersInRank = await db.Customers
+                .Where(c => c.RankId == id)
+                .ToListAsync();
+
+            if (customersInRank.Any())
+            {
+                var otherRanks = await db.CustomerRanks
+                    .Where(r => r.RankId != id)
+                    .OrderBy(r => r.RankPoint)
+                    .ToListAsync();
+
+                if (!otherRanks.Any())
+                    throw new Exception("Không thể xoá vì không còn hạng nào khác để chuyển khách hàng.");
+
+                foreach (var customer in customersInRank)
+                {
+                   
+                    var newRank = otherRanks.LastOrDefault(r => r.RankPoint <= customer.Point);
+
+                    customer.RankId = newRank?.RankId ?? otherRanks.First().RankId;
+                }
+
+                await db.SaveChangesAsync();
+            }
+
+            db.CustomerRanks.Remove(rankToDelete);
             await db.SaveChangesAsync();
         }
 
@@ -73,6 +105,33 @@ namespace Ecommerce.Repositories.RankAccount
             customerRank.RankName = model.RankName;
 
             db.CustomerRanks.Update(customerRank);
+            await db.SaveChangesAsync();
+
+            // Sau khi chỉnh sửa, cập nhật lại hạng cho toàn bộ khách hàng
+            await UpdateCustomerRanksByPoint();
+        }
+
+        // HÀM TỰ CẬP NHẬT HẠNG KHÁCH HÀNG THEO ĐIỂM
+        private async Task UpdateCustomerRanksByPoint()
+        {
+            var ranks = await db.CustomerRanks
+                .OrderBy(r => r.RankPoint)
+                .ToListAsync();
+
+            if (!ranks.Any()) return;
+
+            var customers = await db.Customers.ToListAsync();
+
+            foreach (var customer in customers)
+            {
+                var newRank = ranks.LastOrDefault(r => r.RankPoint <= customer.Point);
+
+                if (newRank != null && customer.RankId != newRank.RankId)
+                {
+                    customer.RankId = newRank.RankId;
+                }
+            }
+
             await db.SaveChangesAsync();
         }
     }
