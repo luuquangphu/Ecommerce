@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Ecommerce.Models
 {
@@ -10,7 +11,7 @@ namespace Ecommerce.Models
 
         public string DiscountName { get; set; }
         
-        public required string DiscountCategory { get; set; }
+        public required string DiscountCategory { get; set; }//Phần trăm, tiền
 
         [Column(TypeName = "decimal(18,2)")]
         public required decimal DiscountPrice { get; set; }
@@ -21,7 +22,11 @@ namespace Ecommerce.Models
 
         //False: ngừng áp dụng, true: áp dụng
         public bool DiscountStatus { get; set; }
-        
-        public virtual ICollection<Discount_Customer> Discount_Customer { get; set; }
+        // ⚡ Thêm mới:
+        [Range(0, int.MaxValue, ErrorMessage = "Điểm quy đổi phải >= 0")]
+        public int RequiredPoints { get; set; }   // ✅ Điểm cần để đổi mã
+
+        [JsonIgnore]
+        public virtual ICollection<Discount_Customer>? Discount_Customer { get; set; }
     }
 }

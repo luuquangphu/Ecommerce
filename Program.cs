@@ -3,6 +3,8 @@ using Ecommerce.Models;
 using Ecommerce.Repositories.AccountRepository;
 using Ecommerce.Repositories.CartRepository;
 using Ecommerce.Repositories.CustomerRepository;
+using Ecommerce.Repositories.DiscountCustomerRepository;
+using Ecommerce.Repositories.DiscountRepository;
 using Ecommerce.Repositories.EmployeeRepository;
 using Ecommerce.Repositories.FoodSizeRepository;
 using Ecommerce.Repositories.InventoryRepository;
@@ -15,6 +17,8 @@ using Ecommerce.Services;
 using Ecommerce.Services.Account;
 using Ecommerce.Services.CartService;
 using Ecommerce.Services.Customer;
+using Ecommerce.Services.DiscountCustomerService;
+using Ecommerce.Services.DiscountService;
 using Ecommerce.Services.EmployeeService;
 using Ecommerce.Services.FoodSizeService;
 using Ecommerce.Services.InventoryService;
@@ -31,6 +35,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Text.Json; // ✅ thêm namespace này
 
 namespace Ecommerce
 {
@@ -40,10 +45,17 @@ namespace Ecommerce
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // ✅ Bật camelCase JSON cho toàn bộ API (rất quan trọng cho Flutter)
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            //Cấu hình Identity
+            // Cấu hình Identity
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -60,7 +72,7 @@ namespace Ecommerce
             }).AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
-            //Cấu hình JWT
+            // Cấu hình JWT
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -78,8 +90,7 @@ namespace Ecommerce
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtSettings["Key"])),
-
+                        Encoding.UTF8.GetBytes(jwtSettings["Key"]))
                 };
                 options.Events = new JwtBearerEvents()
                 {
@@ -87,16 +98,14 @@ namespace Ecommerce
                     {
                         if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
-
+                            // Có thể log hoặc trả thông báo token hết hạn
                         }
                         return Task.CompletedTask;
                     }
                 };
             });
 
-
-            //== Repository Patten ==
-            //Repository
+            //== Repository Pattern ==
             builder.Services.AddScoped<IAccountRepository, AccountRepository>();
             builder.Services.AddScoped<IRankAccountRepository, RankAccountRepository>();
             builder.Services.AddScoped<IOTPRepository, OTPRepository>();
@@ -109,8 +118,10 @@ namespace Ecommerce
             builder.Services.AddScoped<IFoodSizeRepository, FoodSizeRepository>();
             builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+            builder.Services.AddScoped<IDiscountCustomerRepository, DiscountCustomerRepository>();
 
-            //Service
+            //== Services ==
             builder.Services.AddScoped<IVaildService, VaildService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IJwtService, JwtService>();
@@ -124,9 +135,10 @@ namespace Ecommerce
             builder.Services.AddScoped<IFoodSizeService, FoodSizeService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IDiscountService, DiscountService>();
+            builder.Services.AddScoped<IDiscountCustomerService, DiscountCustomerService>();
 
-            //== Singleton Patten ==
-            //Service
+            //== Singleton Pattern ==
             builder.Services.AddSingleton<IMailService, MailService>();
 
             var app = builder.Build();
@@ -135,7 +147,6 @@ namespace Ecommerce
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -143,8 +154,6 @@ namespace Ecommerce
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-            app.UseRouting();
 
             app.UseRouting();
 

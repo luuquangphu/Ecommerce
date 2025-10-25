@@ -10,5 +10,7 @@
         public int Gender { get; set; }
         public string? UrlImage { get; set; }
         public string RankName { get; set; }
+        public int Point { get; set; }
+        public int RankId { get; set; }
     }
 }
