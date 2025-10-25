@@ -23,11 +23,12 @@ namespace Ecommerce.Controllers.Api
         // GET: api/MenuApi
         // =========================
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? search)
         {
-            var menus = await menuService.GetAll();
+            var menus = await menuService.GetAll(search);
             return Ok(menus);
         }
+
 
         // =========================
         // GET: api/MenuApi/{id}

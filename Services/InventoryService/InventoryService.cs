@@ -21,6 +21,10 @@ namespace Ecommerce.Services.InventoryService
         {
             return await inventoryRepository.GetAll();
         }
+        public async Task<IEnumerable<InventoryViewModel>> Search(string keyword)
+        {
+            return await inventoryRepository.Search(keyword);
+        }
 
         public async Task<InventoryViewModel> GetById(int id)
         {

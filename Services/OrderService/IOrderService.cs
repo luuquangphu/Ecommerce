@@ -10,6 +10,6 @@ namespace Ecommerce.Services.OrderService
         Task<IEnumerable<OrderUserDTO>> GetOrdersByUserIdAsync(string customerId);
         Task<StatusDTO> UpdateOrderStatusAsync(int orderId, string newStatus);
         Task<StatusDTO> RequestPaymentAsync(int orderId);
-        Task<OrderDTO> GetAllOrdersAsync();
+        Task<IEnumerable<OrderDTO>> GetAllOrdersAsync();
     }
 }

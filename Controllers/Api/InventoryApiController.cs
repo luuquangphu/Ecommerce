@@ -20,11 +20,18 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] string? search)
         {
+            if (!string.IsNullOrEmpty(search))
+            {
+                var filtered = await inventoryService.Search(search);
+                return Ok(filtered);
+            }
+
             var result = await inventoryService.GetAll();
             return Ok(result);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)

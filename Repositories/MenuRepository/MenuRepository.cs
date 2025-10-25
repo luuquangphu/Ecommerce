@@ -27,19 +27,30 @@ namespace Ecommerce.Repositories.MenuRepository
             await db.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<MenuViewModel>> GetAll()
+        public async Task<IEnumerable<MenuViewModel>> GetAll(string? search = null)
         {
-            var lstMenu = await db.Menus
+            var query = db.Menus
                 .Include(m => m.MenuCategory)
-                .Select(p => new MenuViewModel{
+                .Select(p => new MenuViewModel
+                {
                     MenuId = p.MenuId,
                     MenuName = p.MenuName,
                     MenuCategoryName = p.MenuCategory.MenuCategoryName,
-                    Detail = p.Detail,
-            }).ToListAsync();
+                    Detail = p.Detail
+                });
 
-            return lstMenu;
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLower();
+                query = query.Where(x =>
+                    x.MenuName.ToLower().Contains(search) ||
+                    x.MenuCategoryName.ToLower().Contains(search) ||
+                    (x.Detail != null && x.Detail.ToLower().Contains(search)));
+            }
+
+            return await query.ToListAsync();
         }
+
 
         public async Task<MenuViewModel> GetById(int id)
         {

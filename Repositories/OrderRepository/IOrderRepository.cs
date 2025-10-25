@@ -21,6 +21,6 @@ namespace Ecommerce.Repositories.OrderRepository
         Task<bool> RequestPaymentAsync(int orderId);
 
         //Hàm để người dùng lấy danh sách đơn hàng cùng chi tiết đơn của họ
-        Task<OrderUserDTO> GetOrdersByUserIdAsync(string customerId);
+        Task<IEnumerable<OrderUserDTO>> GetOrdersByUserIdAsync(string customerId);
     }
 }

@@ -11,5 +11,7 @@ namespace Ecommerce.Repositories.FoodSizeRepository
         Task Update(FoodSize model);
         Task Delete(int id);
         Task<string> ValidName(string foodName);
+        Task<IEnumerable<FoodSizeViewModel>> Search(string? keyword);
+
     }
 }

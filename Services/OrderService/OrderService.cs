@@ -169,7 +169,7 @@ namespace Ecommerce.Services.OrderService
         }
 
         // 🔹 Lấy danh sách đơn hàng của người dùng
-        public async Task<OrderUserDTO> GetOrdersByUserIdAsync(string customerId)
+        public async Task<IEnumerable<OrderUserDTO>> GetOrdersByUserIdAsync(string customerId)
         {
             return await orderRepository.GetOrdersByUserIdAsync(customerId);
         }
@@ -247,5 +247,7 @@ namespace Ecommerce.Services.OrderService
                     : "Không thể gửi yêu cầu thanh toán."
             };
         }
+
+        
     }
 }

@@ -11,5 +11,7 @@ namespace Ecommerce.Services.InventoryService
         Task<StatusDTO> Create(Inventory model);
         Task<StatusDTO> Update(Inventory model);
         Task<StatusDTO> Delete(int id);
+        Task<IEnumerable<InventoryViewModel>> Search(string keyword);
+
     }
 }

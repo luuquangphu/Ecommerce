@@ -82,7 +82,7 @@ namespace Ecommerce.Repositories.OrderRepository
         }
 
         //Láy thông tin đơn hàng chưa thanh toán
-        public async Task<OrderUserDTO> GetOrdersByUserIdAsync(string customerId)
+        public async Task<IEnumerable<OrderUserDTO>> GetOrdersByUserIdAsync(string customerId)
         {
             var orders = await db.Orders
                 .Include(o => o.OrderDetails)

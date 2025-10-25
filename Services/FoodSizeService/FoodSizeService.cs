@@ -24,6 +24,13 @@ namespace Ecommerce.Services.FoodSizeService
         {
             return await foodsizeRepository.GetAll();
         }
+        // =====================================
+        // SEARCH
+        // =====================================
+        public async Task<IEnumerable<FoodSizeViewModel>> Search(string? keyword)
+        {
+            return await foodsizeRepository.Search(keyword);
+        }
 
         // =====================================
         // GET BY ID
@@ -41,6 +48,8 @@ namespace Ecommerce.Services.FoodSizeService
             // 1️⃣ Kiểm tra giá bán
             if (model.Price < 0)
                 return new StatusDTO { IsSuccess = false, Message = "Giá bán không được âm" };
+
+
 
             // 3️⃣ Kiểm tra Menu tồn tại
             var menu = await menuRepository.GetById(model.MenuId);
@@ -74,6 +83,7 @@ namespace Ecommerce.Services.FoodSizeService
             // 3️⃣ Kiểm tra giá bán
             if (model.Price < 0)
                 return new StatusDTO { IsSuccess = false, Message = "Giá bán không được âm" };
+
 
             // 5️⃣ Cập nhật
             await foodsizeRepository.Update(model);

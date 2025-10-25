@@ -32,6 +32,34 @@ namespace Ecommerce.Repositories.InventoryRepository
 
             return list;
         }
+        public async Task<IEnumerable<InventoryViewModel>> Search(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return await GetAll();
+            }
+
+            keyword = keyword.ToLower();
+
+            return await db.Inventories
+                .Include(i => i.FoodSize)
+                .ThenInclude(fs => fs.Menu)
+                .Where(i =>
+                    i.FoodSize.Menu.MenuName.ToLower().Contains(keyword) ||
+                    i.FoodSize.FoodName.ToLower().Contains(keyword) ||
+                    i.Unit.ToLower().Contains(keyword))
+                .Select(i => new InventoryViewModel
+                {
+                    InventoryId = i.InventoryId,
+                    MenuName = i.FoodSize.Menu.MenuName,
+                    FoodSizeName = i.FoodSize.FoodName,
+                    Quantity = i.Quantity,
+                    Unit = i.Unit
+                })
+                .Take(50)
+                .ToListAsync();
+        }
+
 
         // 🟢 Lấy tồn kho theo ID
         public async Task<InventoryViewModel> GetById(int id)

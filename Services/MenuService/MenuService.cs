@@ -14,10 +14,11 @@ namespace Ecommerce.Services.MenuService
             this.menuRepository = menuRepository;
         }
 
-        public async Task<IEnumerable<MenuViewModel>> GetAll()
+        public async Task<IEnumerable<MenuViewModel>> GetAll(string? search = null)
         {
-            return await menuRepository.GetAll();
+            return await menuRepository.GetAll(search);
         }
+
 
         public async Task<MenuViewModel> GetById(int id)
         {
