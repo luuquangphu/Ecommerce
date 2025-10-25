@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Data;
+using Ecommerce.HubSocket;
 using Ecommerce.Models;
 using Ecommerce.Repositories.AccountRepository;
 using Ecommerce.Repositories.CartRepository;
@@ -8,6 +9,7 @@ using Ecommerce.Repositories.FoodSizeRepository;
 using Ecommerce.Repositories.InventoryRepository;
 using Ecommerce.Repositories.MenuCategoryRepository;
 using Ecommerce.Repositories.MenuRepository;
+using Ecommerce.Repositories.OrderRepository;
 using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
 using Ecommerce.Repositories.TableRepository;
@@ -22,6 +24,7 @@ using Ecommerce.Services.JWT;
 using Ecommerce.Services.Mail;
 using Ecommerce.Services.MenuCategoryService;
 using Ecommerce.Services.MenuService;
+using Ecommerce.Services.OrderService;
 using Ecommerce.Services.QRImageService;
 using Ecommerce.Services.RankAccount;
 using Ecommerce.Services.TableService;
@@ -30,6 +33,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace Ecommerce
@@ -42,6 +46,41 @@ namespace Ecommerce
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommerce API", Version = "v1" });
+
+                // Nếu dùng JWT
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Nhập token theo dạng: Bearer {token}",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
+
+            // SignalR
+            builder.Services.AddSignalR();
+
 
             //Cấu hình Identity
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -81,6 +120,19 @@ namespace Ecommerce
                         Encoding.UTF8.GetBytes(jwtSettings["Key"])),
 
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/orderHub"))
+                        {
+                            context.Token = accessToken; // 👈 Gán token cho SignalR
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
                 options.Events = new JwtBearerEvents()
                 {
                     OnAuthenticationFailed = context =>
@@ -109,6 +161,8 @@ namespace Ecommerce
             builder.Services.AddScoped<IFoodSizeRepository, FoodSizeRepository>();
             builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
 
             //Service
             builder.Services.AddScoped<IVaildService, VaildService>();
@@ -124,6 +178,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IFoodSizeService, FoodSizeService>();
             builder.Services.AddScoped<IInventoryService, InventoryService>();
             builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
 
             //== Singleton Patten ==
             //Service
@@ -141,6 +196,15 @@ namespace Ecommerce
 
             await RoleConstructor.PhanQuen(app.Services);
 
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Ecommerce API v1");
+                });
+            }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -150,6 +214,8 @@ namespace Ecommerce
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapHub<OrderHub>("/orderHub");
 
             app.MapControllers();
             app.MapControllerRoute(

@@ -23,6 +23,6 @@ namespace Ecommerce.Models
         [Required(ErrorMessage = "Vui lòng chọn loại món ăn!")]
         public int MenuCategoryId { get; set; }
         [ValidateNever]
-        public MenuCategory MenuCategory { get; set; }   
+        public MenuCategory MenuCategory { get; set; }
     }
 }

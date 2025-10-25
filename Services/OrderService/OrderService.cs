@@ -1,8 +1,10 @@
 ﻿using Ecommerce.Data;
 using Ecommerce.DTO;
+using Ecommerce.HubSocket;
 using Ecommerce.Models;
 using Ecommerce.Repositories.CartRepository;
 using Ecommerce.Repositories.OrderRepository;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Services.OrderService
@@ -12,12 +14,14 @@ namespace Ecommerce.Services.OrderService
         private readonly IOrderRepository orderRepository;
         private readonly ICartRepository cartRepository;
         private readonly AppDbContext db;
+        private readonly IHubContext<OrderHub> hubContext;
 
-        public OrderService(IOrderRepository orderRepository, ICartRepository cartRepository, AppDbContext db)
+        public OrderService(IOrderRepository orderRepository, ICartRepository cartRepository, AppDbContext db, IHubContext<OrderHub> hubContext)
         {
             this.orderRepository = orderRepository;
             this.cartRepository = cartRepository;
             this.db = db;
+            this.hubContext = hubContext;
         }
 
         public async Task<StatusDTO> CreateOrderAsync(string userId)
@@ -26,91 +30,151 @@ namespace Ecommerce.Services.OrderService
             if (cart == null)
                 return new StatusDTO { IsSuccess = false, Message = "Không tìm thấy giỏ hàng." };
 
-            using var transaction = await db.Database.BeginTransactionAsync();
             var messages = new List<string>();
+            bool hasError = false;
+
+            // 🔹 Bước 1: Kiểm tra kho
+            foreach (var item in cart.CartDetails)
+            {
+                var inventory = await db.Inventories
+                    .Include(i => i.FoodSize)
+                    .ThenInclude(fs => fs.Menu)
+                    .FirstOrDefaultAsync(i => i.FoodSizeId == item.FoodSizeId);
+
+                if (inventory == null)
+                {
+                    messages.Add($"Không tìm thấy tồn kho cho món {item.FoodSize?.Menu?.MenuName ?? "không xác định"}.");
+                    item.Count = 0;
+                    hasError = true;
+                    continue;
+                }
+
+                if (inventory.Quantity <= 0)
+                {
+                    messages.Add($"Món {inventory.FoodSize.Menu.MenuName} ({inventory.FoodSize.FoodName}) đã hết hàng và bị loại khỏi đơn.");
+                    item.Count = 0;
+                    hasError = true;
+                    continue;
+                }
+
+                if (inventory.Quantity < item.Count)
+                {
+                    messages.Add($"Món {inventory.FoodSize.Menu.MenuName} ({inventory.FoodSize.FoodName}) chỉ còn {inventory.Quantity} phần, đã giảm từ {item.Count} → {inventory.Quantity}.");
+                    item.Count = inventory.Quantity;
+                    hasError = true;
+                }
+
+                db.Cart_Menus.Update(item);
+            }
+
+            await db.SaveChangesAsync();
+
+            if (hasError)
+            {
+                return new StatusDTO
+                {
+                    IsSuccess = false,
+                    Message = string.Join("\n", messages) + "\nVui lòng kiểm tra lại giỏ hàng."
+                };
+            }
+
+            // 🔹 Bước 2: Transaction
+            using var transaction = await db.Database.BeginTransactionAsync();
 
             try
             {
+                // 🔹 Giảm tồn kho
                 foreach (var item in cart.CartDetails)
                 {
-                    // Lấy Inventory theo từng FoodSize
-                    var inventory = await db.Inventories
-                        .Include(i => i.FoodSize)
-                        .ThenInclude(fs => fs.Menu)
-                        .FirstOrDefaultAsync(i => i.FoodSizeId == item.FoodSizeId);
-
-                    if (inventory == null)
+                    var inventory = await db.Inventories.FirstOrDefaultAsync(i => i.FoodSizeId == item.FoodSizeId);
+                    if (inventory != null)
                     {
-                        messages.Add($"Không tìm thấy tồn kho cho món {item.FoodSize?.Menu?.MenuName ?? "không xác định"}.");
-                        continue;
+                        inventory.Quantity -= item.Count;
+                        db.Inventories.Update(inventory);
                     }
-
-                    if (inventory.Quantity <= 0)
-                    {
-                        item.Count = 0;
-                        messages.Add($"Món {inventory.FoodSize.Menu.MenuName} ({inventory.FoodSize.FoodName}) đã hết hàng và bị loại khỏi đơn.");
-                        continue;
-                    }
-
-                    if (inventory.Quantity < item.Count)
-                    {
-                        messages.Add($"Món {inventory.FoodSize.Menu.MenuName} ({inventory.FoodSize.FoodName}) chỉ còn {inventory.Quantity} phần, đã giảm từ {item.Count} → {inventory.Quantity}.");
-                        item.Count = inventory.Quantity;
-                    }
-
-                    // Trừ tồn kho thực tế
-                    inventory.Quantity -= item.Count;
-                    db.Inventories.Update(inventory);
                 }
 
+                // 🔹 Lấy chi tiết giỏ hàng (CartDetails hoặc getCartItem)
+                var cartDetails = await cartRepository.getCartItem(userId);
+
+                // 🔹 Cập nhật giỏ hàng
                 cart.CartStatus = "Xác nhận";
                 db.Carts.Update(cart);
 
-                // Tạo đơn hàng
+                // 🔹 Tạo Order
                 var order = new Order
                 {
                     OrderDate = DateTime.Now,
                     CustomerId = userId,
+                    TableId = cart.TableId,
                     TotalAmount = cart.CartDetails.Sum(i => i.Count * i.FoodSize.Price),
                     OrderStatus = "Tiếp nhận đơn",
                     PaymentStatus = "Chưa thanh toán"
                 };
                 await db.Orders.AddAsync(order);
-
                 await db.SaveChangesAsync();
+
+                
+
+                // 🔹 Tạo danh sách OrderDetails
+                var orderDetailsList = new List<OrderDetails>();
+
+                foreach (var item in cartDetails)
+                {
+                    var detail = new OrderDetails
+                    {
+                        OrderId = order.OrderId,
+                        FoodSizeId = item.FoodSizeId,
+                        Count = item.Count,
+                    };
+                    orderDetailsList.Add(detail);
+                }
+
+                await db.OrderDetails.AddRangeAsync(orderDetailsList);
+                await db.SaveChangesAsync();
+
                 await transaction.CommitAsync();
 
-                var message = messages.Any()
-                    ? string.Join("\n", messages)
-                    : "Giỏ hàng đã được xác nhận và trừ kho thành công.";
+                // 🔹 Gửi thông báo
+                await hubContext.Clients.Groups("Admins", "Staffs").SendAsync("ReceiveNewOrder", new
+                {
+                    OrderId = order.OrderId,
+                    TableName = cart.Table?.TableName ?? "Không xác định",
+                    TotalAmount = order.TotalAmount
+                });
 
-                return new StatusDTO { IsSuccess = true, Message = message };
+                return new StatusDTO { IsSuccess = true, Message = "Giỏ hàng đã được xác nhận và tạo đơn hàng thành công." };
             }
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
-                return new StatusDTO { IsSuccess = false, Message = "Lỗi khi xác nhận giỏ hàng: " + ex.Message };
+                return new StatusDTO
+                {
+                    IsSuccess = false,
+                    Message = "Lỗi khi xác nhận giỏ hàng: " + (ex.InnerException?.Message ?? ex.Message)
+                };
             }
         }
 
         // 🔹 Lấy danh sách tất cả đơn hàng (phía nhà hàng)
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        public async Task<IEnumerable<OrderDTO>> GetAllOrdersAsync()
         {
             return await orderRepository.GetAllOrderAsync();
         }
 
         // 🔹 Lấy thông tin chi tiết 1 đơn hàng
-        public async Task<Order?> GetOrderDetailsByIdAsync(int orderId)
+        public async Task<IEnumerable<OrderDetailDTO>?> GetOrderDetailsByIdAsync(int orderId)
         {
             return await orderRepository.GetOrderDetailsByIdAsync(orderId);
         }
 
         // 🔹 Lấy danh sách đơn hàng của người dùng
-        public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string customerId)
+        public async Task<OrderUserDTO> GetOrdersByUserIdAsync(string customerId)
         {
             return await orderRepository.GetOrdersByUserIdAsync(customerId);
         }
 
+        //Cập nhật trạng thái đơn hàng
         public async Task<StatusDTO> UpdateOrderStatusAsync(int orderId, string newStatus)
         {
             var allowedStatuses = new[] { "Tiếp nhận đơn", "Đang chuẩn bị", "Hoàn thành" };
@@ -136,6 +200,19 @@ namespace Ecommerce.Services.OrderService
 
             var success = await orderRepository.UpdateOrderStatusAsync(orderId, newStatus);
 
+            if (success)
+            {
+                // 🔥 Gửi socket thông báo realtime cho khách hàng
+                var customerId = order.CustomerId; // Lấy Id khách hàng của đơn
+                await hubContext.Clients.Group($"User_{customerId}")
+                    .SendAsync("OrderStatusChanged", new
+                    {
+                        OrderId = order.OrderId,
+                        NewStatus = newStatus,
+                        Message = $"Đơn hàng #{order.OrderId} đã chuyển sang trạng thái '{newStatus}'"
+                    });
+            }
+
             return new StatusDTO
             {
                 IsSuccess = success,
@@ -144,6 +221,7 @@ namespace Ecommerce.Services.OrderService
                     : "Cập nhật trạng thái thất bại."
             };
         }
+
 
         // 🔹 Gửi yêu cầu thanh toán (chỉ khi OrderStatus = Hoàn thành)
         public async Task<StatusDTO> RequestPaymentAsync(int orderId)

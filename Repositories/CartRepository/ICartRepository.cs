@@ -6,7 +6,7 @@ namespace Ecommerce.Repositories.CartRepository
 {
     public interface ICartRepository
     {
-        Task Create(Cart model);
+        Task<int> CreateAsync(Cart model);
         Task AddToCart(int foodsizeId, int cartId);
         Task RemoveToCart(int foodsizeId, int cartId);
         Task<IEnumerable<CartItemDTO>> getCartItem(string userId);

@@ -10,7 +10,6 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User")]
     public class OrderApiController : ControllerBase
     {
         private readonly IOrderService orderService;
@@ -22,24 +21,15 @@ namespace Ecommerce.Controllers.Api
             this.userManager = userManager;
         }
 
-        [HttpPost("CreateOrder")]
-        public async Task<IActionResult> CreateOrder(string userId)
-        {
-            var result = await orderService.CreateOrderAsync(userId);
-            if (!result.IsSuccess)
-                return BadRequest(result.Message);
-            return Ok(result);
-        }
-
         [Authorize(Roles = "User")]
         [HttpPost("CreateOrder")]
         public async Task<IActionResult> CreateOrder()
         {
-            var user = await userManager.GetUserAsync(User);
-            if (user == null)
+            var userId = User.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userId))
                 return Unauthorized(new StatusDTO { IsSuccess = false, Message = "Người dùng chưa đăng nhập." });
 
-            var result = await orderService.CreateOrderAsync(user.Id);
+            var result = await orderService.CreateOrderAsync(userId);
             if (!result.IsSuccess)
                 return BadRequest(result);
 
@@ -72,18 +62,18 @@ namespace Ecommerce.Controllers.Api
         [HttpGet("GetMyOrders")]
         public async Task<IActionResult> GetMyOrders()
         {
-            var user = await userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized(new StatusDTO { IsSuccess = false, Message = "Người dùng chưa đăng nhập." });
+            var userId = User.FindFirst("userId")?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new StatusDTO { IsSuccess = false, Message = "Người dùng chưa đăng nhập." }); ;
 
-            var orders = await orderService.GetOrdersByUserIdAsync(user.Id);
+            var orders = await orderService.GetOrdersByUserIdAsync(userId);
             return Ok(orders);
         }
 
         // 🔹 [ADMIN/STAFF] Cập nhật trạng thái đơn hàng (Tiếp nhận đơn, Đang chuẩn bị, Hoàn thành)
         [Authorize(Roles = "Admin,Staff")]
         [HttpPut("UpdateOrderStatus/{orderId}")]
-        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromBody] string newStatus)
+        public async Task<IActionResult> UpdateOrderStatus(int orderId, [FromQuery] string newStatus)
         {
             var result = await orderService.UpdateOrderStatusAsync(orderId, newStatus);
             if (!result.IsSuccess)

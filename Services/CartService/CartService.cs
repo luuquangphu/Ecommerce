@@ -34,16 +34,16 @@ namespace Ecommerce.Services.CartService
             return new StatusDTO { IsSuccess = true, Message = "Thêm món vào giỏ hàng thành công" };
         }
 
-        public async Task<StatusDTO> Create(Cart model)
+        public async Task<CreateCartDTO> Create(Cart model)
         {
             var user = await userManager.FindByIdAsync(model.CustomerId);
-            if (user == null) return new StatusDTO { IsSuccess = false, Message = "Không tìm thấy người dùng trong hệ thống" };
+            if (user == null) return new CreateCartDTO { IsSuccess = false, Message = "Không tìm thấy người dùng trong hệ thống" };
 
             var cart = await tableRepository.GetById(model.TableId);
-            if (cart == null) return new StatusDTO { IsSuccess = false, Message = "Bàn không tồn tại" };
+            if (cart == null) return new CreateCartDTO { IsSuccess = false, Message = "Bàn không tồn tại" };
 
-            await cartRepository.Create(model);
-            return new StatusDTO { IsSuccess = true, Message = "Tạo giỏ hàng thành công" };
+            var cartId = await cartRepository.CreateAsync(model);
+            return new CreateCartDTO { CartId = cartId, IsSuccess = true, Message = "Tạo giỏ hàng thành công" };
         }
 
         public async Task<IEnumerable<CartItemDTO>> GetCartItem(string userId)

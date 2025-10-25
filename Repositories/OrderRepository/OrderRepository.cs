@@ -1,4 +1,5 @@
 ﻿using Ecommerce.Data;
+using Ecommerce.DTO;
 using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,26 +17,42 @@ namespace Ecommerce.Repositories.OrderRepository
         public async Task<Order?> GetById(int orderId) => await db.Orders.FirstOrDefaultAsync(o => o.OrderId == orderId);
 
         //Hàm để hiện đơn hàng phía nhà hàng
-        public async Task<IEnumerable<Order>> GetAllOrderAsync()
+        public async Task<IEnumerable<OrderDTO>> GetAllOrderAsync()
         {
             return await db.Orders
                 .Include(o => o.Table)
                 .Include(o => o.Customer)
-                .Where(o => o.OrderStatus != "Hoàn thành")
+                .Where(o => o.OrderStatus != "Hoàn thành").Select(o => new OrderDTO
+                {
+                    OrderId = o.OrderId,
+                    OrderStatus = o.OrderStatus,
+                    OrderDate = o.OrderDate,
+                    TableName = o.Table.TableName,
+                    TotalAmount = o.TotalAmount,
+                })
                 .OrderBy(o => o.OrderDate)
                 .ToListAsync();
         }
 
         //Hiện thông tin chi tiết của 1 đơn phía nhà hàng
-        public async Task<Order?> GetOrderDetailsByIdAsync(int orderId)
+        public async Task<IEnumerable<OrderDetailDTO>?> GetOrderDetailsByIdAsync(int orderId)
         {
-            return await db.Orders
-                .Include(o => o.OrderDetails)
-                    .ThenInclude(d => d.FoodSize)
-                        .ThenInclude(fs => fs.Menu)
-                .Include(o => o.Table)
-                .Include(o => o.Customer)
-                .FirstOrDefaultAsync(o => o.OrderId == orderId);
+            var details = await db.OrderDetails
+            .Include(od => od.FoodSize)
+            .ThenInclude(fs => fs.Menu)
+            .Where(od => od.OrderId == orderId)
+            .Select(od => new OrderDetailDTO
+            {
+                FoodName = od.FoodSize.Menu.MenuName + " - " + od.FoodSize.FoodName,
+                Quantity = od.Count,
+                UrlImage = db.FoodImages
+                        .Where(i => i.MenuId == od.FoodSize.MenuId && i.MainImage)
+                        .Select(i => i.UrlImage)
+                        .FirstOrDefault()
+            })
+            .ToListAsync();
+
+            return details;
         }
 
         //Hàm cập nhật OrderStatus(Trạng thái đơn hàng) phía bếp
@@ -64,19 +81,41 @@ namespace Ecommerce.Repositories.OrderRepository
 
         }
 
-
-        //Hàm để người dùng lấy danh sách đơn hàng cùng chi tiết đơn của họ 
-        public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string customerId)
+        //Láy thông tin đơn hàng chưa thanh toán
+        public async Task<OrderUserDTO> GetOrdersByUserIdAsync(string customerId)
         {
-            return await db.Orders
-                .Include(o => o.Table)
+            var orders = await db.Orders
                 .Include(o => o.OrderDetails)
                     .ThenInclude(d => d.FoodSize)
                         .ThenInclude(fs => fs.Menu)
-                .Where(o => o.CustomerId == customerId && o.PaymentStatus == "Yêu cầu thanh toán" || o.PaymentStatus == "Yêu cầu thanh toán")
+                .Include(o => o.Table)
+                .Where(o => o.CustomerId == customerId &&
+                    (o.PaymentStatus == "Chưa thanh toán" || o.PaymentStatus == "Yêu cầu thanh toán"))
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
+
+            var orderDtos = orders.Select(o => new OrderUserDTO
+            {
+                OrderId = o.OrderId,
+                TotalAmount = o.TotalAmount,
+                OrderStatus = o.OrderStatus,
+                OrderDate = o.OrderDate,
+                PaymentStatus = o.PaymentStatus,
+
+                OrderDetail = o.OrderDetails.Select(d => new OrderDetailDTO
+                {
+                    FoodName = $"{d.FoodSize.Menu.MenuName} - {d.FoodSize.FoodName}",
+                    Quantity = d.Count,
+                    UrlImage = db.FoodImages
+                        .Where(i => i.MenuId == d.FoodSize.MenuId && i.MainImage)
+                        .Select(i => i.UrlImage)
+                        .FirstOrDefault()
+                }).ToList()
+            });
+
+            return orderDtos;
         }
+
 
     }
 }

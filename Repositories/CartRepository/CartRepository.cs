@@ -42,10 +42,18 @@ namespace Ecommerce.Repositories.CartRepository
             await db.SaveChangesAsync();
         }
 
-        public async Task Create(Cart model)
+        public async Task<int> CreateAsync(Cart model)
         {
+            var existingCart = await db.Carts
+                .FirstOrDefaultAsync(c => c.CustomerId == model.CustomerId && c.CartStatus == "Chưa xác nhận");
+
+            if (existingCart != null)
+                return existingCart.CartId;
+
             await db.Carts.AddAsync(model);
             await db.SaveChangesAsync();
+
+            return model.CartId;
         }
 
         public async Task RemoveToCart(int foodsizeId, int cartId)
@@ -118,10 +126,12 @@ namespace Ecommerce.Repositories.CartRepository
         public async Task<Cart?> GetActiveCartByUserIdAsync(string userId)
         {
             return await db.Carts
-                .Include(c => c.CartDetails)
-                    .ThenInclude(cm => cm.FoodSize)
+                    .Include(c => c.Table)
+                    .Include(c => c.CartDetails)
+                        .ThenInclude(cd => cd.FoodSize)
                         .ThenInclude(fs => fs.Menu)
-                .FirstOrDefaultAsync(c => c.CustomerId == userId && c.CartStatus == "Chưa xác nhận");
+                    .FirstOrDefaultAsync(c => c.CustomerId == userId && c.CartStatus == "Chưa xác nhận");
+
         }
 
     }

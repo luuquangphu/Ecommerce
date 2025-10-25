@@ -1,4 +1,6 @@
-﻿namespace Ecommerce.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Ecommerce.Models
 {
     public class FoodImage
     {

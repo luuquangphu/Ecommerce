@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecommerce.Models
 {
+    [Table("Menu_Orders")]
     public class OrderDetails
     {
         public int FoodSizeId { get; set; }

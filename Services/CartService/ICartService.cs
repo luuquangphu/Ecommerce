@@ -6,7 +6,7 @@ namespace Ecommerce.Services.CartService
     public interface ICartService
     {
         Task<IEnumerable<CartItemDTO>> GetCartItem(string userId);
-        Task<StatusDTO> Create(Cart model);
+        Task<CreateCartDTO> Create(Cart model);
         Task<StatusDTO> AddToCart(int foodsizeId, int cartId);
         Task<StatusDTO> RemoveToCart(int foodsizeId, int cartId);
         Task<(int quantity, decimal total)> GetQuantityCartItem(string userId);

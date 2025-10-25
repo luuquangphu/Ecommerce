@@ -1,4 +1,5 @@
-﻿using Ecommerce.Models;
+﻿using Ecommerce.DTO;
+using Ecommerce.Models;
 
 namespace Ecommerce.Repositories.OrderRepository
 {
@@ -8,10 +9,10 @@ namespace Ecommerce.Repositories.OrderRepository
         Task<Order?> GetById(int orderId);
 
         //Hàm để hiện đơn hàng phía nhà hàng
-        Task<IEnumerable<Order>> GetAllOrderAsync();
+        Task<IEnumerable<OrderDTO>> GetAllOrderAsync();
 
         //Hiện thông tin chi tiết của 1 đơn phía nhà hàng
-        Task<Order?> GetOrderDetailsByIdAsync(int orderId);
+        Task<IEnumerable<OrderDetailDTO>> GetOrderDetailsByIdAsync(int orderId);
 
         //Hàm cập nhật OrderStatus(Trạng thái đơn hàng) phía bếp
         Task<bool> UpdateOrderStatusAsync(int orderId, string newStatus);
@@ -20,6 +21,6 @@ namespace Ecommerce.Repositories.OrderRepository
         Task<bool> RequestPaymentAsync(int orderId);
 
         //Hàm để người dùng lấy danh sách đơn hàng cùng chi tiết đơn của họ
-        Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string customerId);
+        Task<OrderUserDTO> GetOrdersByUserIdAsync(string customerId);
     }
 }

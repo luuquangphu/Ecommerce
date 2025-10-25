@@ -21,7 +21,7 @@ namespace Ecommerce.Data
         public DbSet<MenuCategory> MenuCategories { get; set; }
         public DbSet<CartDetails> Cart_Menus { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetails> Menu_Orders { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Revenue> Revenues { get; set; }
         public DbSet<Revenue_Order> Revenue_Orders { get; set; }
