@@ -10,7 +10,7 @@ namespace Ecommerce.Models
 
         public string DiscountName { get; set; }
         
-        public required string DiscountCategory { get; set; }
+        public required string DiscountCategory { get; set; }//Phần trăm, tiền
 
         [Column(TypeName = "decimal(18,2)")]
         public required decimal DiscountPrice { get; set; }

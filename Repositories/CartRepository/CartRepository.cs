@@ -115,5 +115,14 @@ namespace Ecommerce.Repositories.CartRepository
             return (cartItem.Count(), total);
         }
 
+        public async Task<Cart?> GetActiveCartByUserIdAsync(string userId)
+        {
+            return await db.Carts
+                .Include(c => c.CartDetails)
+                    .ThenInclude(cm => cm.FoodSize)
+                        .ThenInclude(fs => fs.Menu)
+                .FirstOrDefaultAsync(c => c.CustomerId == userId && c.CartStatus == "Chưa xác nhận");
+        }
+
     }
 }

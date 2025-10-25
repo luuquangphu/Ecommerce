@@ -17,15 +17,18 @@ namespace Ecommerce.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "8.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Ecommerce.Models.Cart", b =>
                 {
-                    b.Property<string>("CartId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("CartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"));
 
                     b.Property<string>("CartStatus")
                         .IsRequired()
@@ -49,8 +52,8 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Models.CartDetails", b =>
                 {
-                    b.Property<string>("CartId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
 
                     b.Property<int>("FoodSizeId")
                         .HasColumnType("int");
@@ -148,9 +151,8 @@ namespace Ecommerce.Migrations
                     b.Property<bool>("MainImage")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MenuId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("int");
@@ -177,9 +179,8 @@ namespace Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MenuId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -221,15 +222,17 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Models.Menu", b =>
                 {
-                    b.Property<string>("MenuId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuId"));
 
                     b.Property<string>("Detail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MenuCategoryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MenuCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MenuName")
                         .IsRequired()
@@ -245,8 +248,11 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Models.MenuCategory", b =>
                 {
-                    b.Property<string>("MenuCategoryId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("MenuCategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuCategoryId"));
 
                     b.Property<string>("MenuCategoryName")
                         .IsRequired()
@@ -257,10 +263,43 @@ namespace Ecommerce.Migrations
                     b.ToTable("MenuCategories");
                 });
 
+            modelBuilder.Entity("Ecommerce.Models.OTP", b =>
+                {
+                    b.Property<int>("OTPId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OTPId"));
+
+                    b.Property<string>("OTPCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeCreate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("OTPId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("OTPs");
+                });
+
             modelBuilder.Entity("Ecommerce.Models.Order", b =>
                 {
-                    b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
@@ -303,8 +342,8 @@ namespace Ecommerce.Migrations
                     b.Property<int>("FoodSizeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Count")
                         .HasColumnType("int");
@@ -318,8 +357,11 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Models.Revenue", b =>
                 {
-                    b.Property<string>("RevenueId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RevenueId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RevenueId"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -334,11 +376,11 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Models.Revenue_Order", b =>
                 {
-                    b.Property<string>("RevenueId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RevenueId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.HasKey("RevenueId", "OrderId");
 
@@ -357,6 +399,9 @@ namespace Ecommerce.Migrations
 
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
+
+                    b.Property<string>("OwnerTable")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("QRCodePath")
                         .HasColumnType("nvarchar(max)");
@@ -386,7 +431,8 @@ namespace Ecommerce.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateTime?>("DateOfBirth")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Discriminator")
@@ -458,7 +504,7 @@ namespace Ecommerce.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator().HasValue("Users");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Users");
 
                     b.UseTphMappingStrategy();
                 });
@@ -724,6 +770,17 @@ namespace Ecommerce.Migrations
                         .IsRequired();
 
                     b.Navigation("MenuCategory");
+                });
+
+            modelBuilder.Entity("Ecommerce.Models.OTP", b =>
+                {
+                    b.HasOne("Ecommerce.Models.Users", "Users")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Ecommerce.Models.Order", b =>

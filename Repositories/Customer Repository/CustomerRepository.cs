@@ -17,6 +17,7 @@ namespace Ecommerce.Repositories.CustomerRepository
         private readonly UserManager<Users> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IVaildService vaildService;
+       
 
         public CustomerRepository(AppDbContext db, UserManager<Users> userManager, IVaildService vaildService, RoleManager<IdentityRole> roleManager) 
         {
@@ -100,7 +101,10 @@ namespace Ecommerce.Repositories.CustomerRepository
                     PhoneNumber = c.PhoneNumber,
                     Gender = c.Gender,
                     DateOfBirth = c.DateOfBirth,
-                    RankName = c.CustomerRank.RankName
+                    RankName = c.CustomerRank.RankName,
+                    UrlImage = c.UrlImage,
+                    Point = c.Point,
+                    RankId = c.RankId,
                 })
                 .ToListAsync();
 
@@ -125,8 +129,6 @@ namespace Ecommerce.Repositories.CustomerRepository
                 customer.Email = model.Email;
                 customer.DateOfBirth = model.DateOfBirth;
                 customer.Gender = model.Gender;
-                customer.RankId = model.RankId;
-
                 if (customer.Point != model.Point)
                 {
                     var rank = await db.CustomerRanks
