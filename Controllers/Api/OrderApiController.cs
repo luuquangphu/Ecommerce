@@ -93,5 +93,16 @@ namespace Ecommerce.Controllers.Api
 
             return Ok(result);
         }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("UpdatePaymentMethodandTotal")]
+        public async Task<IActionResult> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model)
+        {
+            var result = await orderService.UpdatePaymentMethodandTotal(model);
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
+            return Ok(result);
+        }
     }
 }

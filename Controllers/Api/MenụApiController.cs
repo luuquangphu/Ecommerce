@@ -9,7 +9,6 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class MenuApiController : ControllerBase
     {
         private readonly IMenuService menuService;
@@ -23,6 +22,7 @@ namespace Ecommerce.Controllers.Api
         // GET: api/MenuApi
         // =========================
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll([FromQuery] string? search)
         {
             var menus = await menuService.GetAll(search);
@@ -34,6 +34,7 @@ namespace Ecommerce.Controllers.Api
         // GET: api/MenuApi/{id}
         // =========================
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var menu = await menuService.GetById(id);
@@ -51,6 +52,7 @@ namespace Ecommerce.Controllers.Api
         // POST: api/MenuApi
         // =========================
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] Menu model)
         {
             if (!ModelState.IsValid)
@@ -74,6 +76,7 @@ namespace Ecommerce.Controllers.Api
         // PUT: api/MenuApi/{id}
         // =========================
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] Menu model)
         {
             if (id != model.MenuId)
@@ -94,12 +97,24 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {   
             var result = await menuService.Delete(id);
 
             if (!result.IsSuccess)
                 return BadRequest(result);
+
+            return Ok(result);
+        }
+
+        [HttpGet("GetAvailableMenus")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetAvailableMenus()
+        {
+            var result = await menuService.GetAvailableMenusAsync();
+            if (result == null || !result.Any())
+                return NotFound(new { message = "Không có món ăn khả dụng." });
 
             return Ok(result);
         }

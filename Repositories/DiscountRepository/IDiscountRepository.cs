@@ -10,5 +10,6 @@ namespace Ecommerce.Repositories.DiscountRepository
         Task Update(Discount model);
         Task Delete(string id);
         Task<bool> ExchangeDiscountAsync(string discountId, string customerId);
+        Task<Discount_Customer?> GetDiscountByUserId(string userId, string discountId);
     }
 }

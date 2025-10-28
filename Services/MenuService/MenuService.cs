@@ -2,6 +2,7 @@
 using Ecommerce.Models;
 using Ecommerce.Repositories.MenuRepository;
 using Ecommerce.ViewModels;
+using static Ecommerce.DTO.MenuOrderDTO;
 
 namespace Ecommerce.Services.MenuService
 {
@@ -71,6 +72,11 @@ namespace Ecommerce.Services.MenuService
                 IsSuccess = true,
                 Message = $"Xóa món {menu.MenuName} thành công"
             };
+        }
+
+        public async Task<List<MenuDto>> GetAvailableMenusAsync()
+        {
+            return await menuRepository.GetAvailableMenusAsync();
         }
     }
 }

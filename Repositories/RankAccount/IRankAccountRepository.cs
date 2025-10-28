@@ -10,5 +10,6 @@ namespace Ecommerce.Repositories.RankAccount
         Task DeleteAsync(int id);
         Task<IEnumerable<CustomerRank>> GetAllAsync();
         Task<CustomerRank> GetByIdAsync(int id);
+        Task<int?> GetRankPointByUserIdAsync(string userId);
     }
 }

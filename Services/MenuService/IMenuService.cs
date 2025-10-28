@@ -1,6 +1,7 @@
 ﻿using Ecommerce.DTO;
 using Ecommerce.Models;
 using Ecommerce.ViewModels;
+using static Ecommerce.DTO.MenuOrderDTO;
 
 namespace Ecommerce.Services.MenuService
 {
@@ -12,5 +13,7 @@ namespace Ecommerce.Services.MenuService
         Task<StatusDTO> Create(Menu model);
         Task<StatusDTO> Update(Menu model);
         Task<StatusDTO> Delete(int id);
+
+        Task<List<MenuDto>> GetAvailableMenusAsync();
     }
 }

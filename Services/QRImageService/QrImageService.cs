@@ -13,7 +13,7 @@ namespace Ecommerce.Services.QRImageService
 
         public async Task<string> CreateTableQrAsync(int tableId, string qrContent)
         {
-            var folderPath = Path.Combine(_env.WebRootPath, "Image", "TableQR");
+            var folderPath = Path.Combine(_env.WebRootPath, "Images", "TableQR");
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
