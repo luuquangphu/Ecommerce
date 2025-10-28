@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace Ecommerce.HubSocket
 {
     [Authorize]
-    public class OrderHub : Hub
+    public class OrderHub : Microsoft.AspNetCore.SignalR.Hub
     {
         public override async Task OnConnectedAsync()
         {
@@ -29,7 +29,5 @@ namespace Ecommerce.HubSocket
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"User_{userId}");
             await base.OnDisconnectedAsync(exception);
         }
-
-
     }
 }

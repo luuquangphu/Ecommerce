@@ -49,7 +49,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPost("VerifyOTP")]
-        public async Task<IActionResult> VerifyOTP(VerifyOTPViewModel model)
+        public async Task<IActionResult> VerifyOTP([FromBody] VerifyOTPViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

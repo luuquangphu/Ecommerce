@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Ecommerce.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -50,7 +50,8 @@ namespace Ecommerce.Migrations
                     DiscountPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DateEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateStart = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DiscountStatus = table.Column<bool>(type: "bit", nullable: false)
+                    DiscountStatus = table.Column<bool>(type: "bit", nullable: false),
+                    RequiredPoints = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,7 +62,8 @@ namespace Ecommerce.Migrations
                 name: "MenuCategories",
                 columns: table => new
                 {
-                    MenuCategoryId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MenuCategoryId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     MenuCategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -73,7 +75,8 @@ namespace Ecommerce.Migrations
                 name: "Revenues",
                 columns: table => new
                 {
-                    RevenueId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RevenueId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -91,7 +94,8 @@ namespace Ecommerce.Migrations
                     TableName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     TableStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QRCodePath = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    QRCodePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OwnerTable = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -161,10 +165,11 @@ namespace Ecommerce.Migrations
                 name: "Menus",
                 columns: table => new
                 {
-                    MenuId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MenuId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     MenuName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Detail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MenuCategoryId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    MenuCategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -266,7 +271,8 @@ namespace Ecommerce.Migrations
                 name: "Carts",
                 columns: table => new
                 {
-                    CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CartId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CartStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     TableId = table.Column<int>(type: "int", nullable: false)
@@ -317,7 +323,8 @@ namespace Ecommerce.Migrations
                 name: "Orders",
                 columns: table => new
                 {
-                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     TotalAmount = table.Column<decimal>(type: "decimal(37,1)", nullable: false),
                     OrderStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -345,13 +352,35 @@ namespace Ecommerce.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OTPs",
+                columns: table => new
+                {
+                    OTPId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OTPCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TimeCreate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OTPs", x => x.OTPId);
+                    table.ForeignKey(
+                        name: "FK_OTPs_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FoodImages",
                 columns: table => new
                 {
                     FoodImageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UrlImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MenuId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MenuId = table.Column<int>(type: "int", nullable: false),
                     SortOrder = table.Column<int>(type: "int", nullable: false),
                     MainImage = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -372,7 +401,7 @@ namespace Ecommerce.Migrations
                 {
                     FoodSizeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MenuId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MenuId = table.Column<int>(type: "int", nullable: false),
                     FoodName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SortOrder = table.Column<int>(type: "int", nullable: false)
@@ -392,8 +421,8 @@ namespace Ecommerce.Migrations
                 name: "Revenue_Orders",
                 columns: table => new
                 {
-                    RevenueId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    RevenueId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -417,7 +446,7 @@ namespace Ecommerce.Migrations
                 columns: table => new
                 {
                     FoodSizeId = table.Column<int>(type: "int", nullable: false),
-                    CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CartId = table.Column<int>(type: "int", nullable: false),
                     Count = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -463,7 +492,7 @@ namespace Ecommerce.Migrations
                 columns: table => new
                 {
                     FoodSizeId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
                     Count = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -583,6 +612,11 @@ namespace Ecommerce.Migrations
                 column: "TableId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OTPs_UserId",
+                table: "OTPs",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Revenue_Orders_OrderId",
                 table: "Revenue_Orders",
                 column: "OrderId");
@@ -620,6 +654,9 @@ namespace Ecommerce.Migrations
 
             migrationBuilder.DropTable(
                 name: "Menu_Orders");
+
+            migrationBuilder.DropTable(
+                name: "OTPs");
 
             migrationBuilder.DropTable(
                 name: "Revenue_Orders");
