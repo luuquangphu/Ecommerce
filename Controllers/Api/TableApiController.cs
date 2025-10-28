@@ -8,7 +8,6 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class TableApiController : ControllerBase
     {
         private readonly ITableService tableService;
@@ -19,6 +18,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll()
         {
             var items = await tableService.GetAll();
@@ -26,6 +26,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] Table model)
         {
             if (!ModelState.IsValid)
@@ -36,6 +37,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] Table model)
         {
             if (!ModelState.IsValid)
@@ -46,6 +48,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await tableService.Delete(id);
@@ -53,6 +56,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet("CreateQR")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateQR(int tableId)
         {
             var result = await tableService.CreateQRTable(tableId);
@@ -60,10 +64,11 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet("ValidTableToken")]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> ValidTableToken(string token)
         {
             var result = await tableService.ValidTableToken(token, User);
-            return result.IsValid ? Ok(result.Message) : BadRequest(result.Message);
+            return result.IsValid ? Ok(result) : BadRequest(result.Message);
         }
 
     }

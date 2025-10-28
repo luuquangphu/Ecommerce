@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Ecommerce.Services.Vaild
 {

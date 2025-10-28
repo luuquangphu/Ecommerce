@@ -59,5 +59,7 @@ namespace Ecommerce.Repositories.DiscountCustomerRepository
             context.Discount_Customers.Update(entity);
             await context.SaveChangesAsync();
         }
+
+        
     }
 }

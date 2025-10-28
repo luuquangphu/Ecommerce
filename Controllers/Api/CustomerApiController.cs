@@ -49,6 +49,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpDelete("DeleteCustomer")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteCustomer(string userId)
         {
             var result = await customerService.Delete(userId);

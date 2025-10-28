@@ -3,7 +3,11 @@ using Ecommerce.DTO;
 using Ecommerce.HubSocket;
 using Ecommerce.Models;
 using Ecommerce.Repositories.CartRepository;
+using Ecommerce.Repositories.DiscountCustomerRepository;
+using Ecommerce.Repositories.DiscountRepository;
 using Ecommerce.Repositories.OrderRepository;
+using Ecommerce.Repositories.RankAccount;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,13 +19,20 @@ namespace Ecommerce.Services.OrderService
         private readonly ICartRepository cartRepository;
         private readonly AppDbContext db;
         private readonly IHubContext<OrderHub> hubContext;
+        private readonly IDiscountRepository discountRepository;
+        private readonly UserManager<Users> userManager;
+        private readonly IRankAccountRepository rankAccountRepository;
 
-        public OrderService(IOrderRepository orderRepository, ICartRepository cartRepository, AppDbContext db, IHubContext<OrderHub> hubContext)
+        public OrderService(IOrderRepository orderRepository, ICartRepository cartRepository, AppDbContext db, IHubContext<OrderHub> hubContext,
+            IDiscountRepository discountRepository, UserManager<Users> userManager, IRankAccountRepository rankAccountRepository)
         {
             this.orderRepository = orderRepository;
             this.cartRepository = cartRepository;
             this.db = db;
             this.hubContext = hubContext;
+            this.discountRepository = discountRepository;
+            this.userManager = userManager;
+            this.rankAccountRepository = rankAccountRepository;
         }
 
         public async Task<StatusDTO> CreateOrderAsync(string userId)
@@ -248,6 +259,84 @@ namespace Ecommerce.Services.OrderService
             };
         }
 
-        
+        public async Task<StatusDTO> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model)
+        {
+            var order = await orderRepository.GetById(model.OrderId);
+            if (order == null)
+                return new StatusDTO { IsSuccess = false, Message = "Đơn hàng không tồn tại" };
+
+            order.PaymentMethod = model.PaymentMethod;
+            order.PaymentStatus = "Chờ xác nhận thanh toán";
+
+            string? discountCategory = null;
+            decimal? discountPrice = null;
+
+            // 🔹 Xử lý mã giảm giá nếu có
+            if (!string.IsNullOrWhiteSpace(model.DiscountId))
+            {
+                var discount = await discountRepository.GetById(model.DiscountId);
+                if (discount == null)
+                    return new StatusDTO { IsSuccess = false, Message = "Mã giảm giá không tồn tại" };
+
+                var discountCustomer = await discountRepository.GetDiscountByUserId(order.CustomerId, model.DiscountId);
+                if (discountCustomer == null)
+                    return new StatusDTO { IsSuccess = false, Message = "Người dùng không có mã giảm giá này" };
+
+                discountCustomer.isUsed = true;
+
+                // ✅ Lưu thông tin discount để tính
+                discountCategory = discount.DiscountCategory;
+                discountPrice = discount.DiscountPrice;
+            }
+
+            // 🔹 Lấy giảm giá theo hạng thành viên
+            var rankDiscount = await rankAccountRepository.GetRankPointByUserIdAsync(order.CustomerId);
+
+            // 🔹 Tính tổng tiền cuối cùng
+            var total = CalculateTotal(order.TotalAmount, discountCategory, discountPrice, rankDiscount ?? 0);
+
+            // 🔹 Cập nhật lại vào đơn hàng
+            order.TotalAmount = total;
+
+            await db.SaveChangesAsync();
+
+            return new StatusDTO
+            {
+                IsSuccess = true,
+                Message = "Cập nhật giá tiền và phương thức thanh toán thành công"
+            };
+        }
+
+
+        private decimal CalculateTotal(decimal total, string? discountCategory, decimal? discountPrice, int? rankDiscount)
+        {
+            decimal totalDiscount = 0;
+            decimal totalRankDiscount = 0;
+
+            // Giảm giá theo mã khuyến mãi
+            if (discountPrice != null && discountPrice > 0)
+            {
+                if (discountCategory == "Phần trăm")
+                {
+                    totalDiscount = total * ((decimal)discountPrice / 100);
+                }
+                else
+                {
+                    totalDiscount = (decimal)discountPrice;
+                }
+            }
+
+            // Giảm giá theo hạng thành viên
+            if (rankDiscount != null && rankDiscount > 0)
+            {
+                totalRankDiscount = total * ((decimal)rankDiscount / 100);
+            }
+
+            decimal finalTotal = total - totalDiscount - totalRankDiscount;
+            if (finalTotal < 0) finalTotal = 0; // tránh âm tiền
+
+            return finalTotal;
+        }
+
     }
 }

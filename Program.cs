@@ -33,6 +33,7 @@ using Ecommerce.Services.QRImageService;
 using Ecommerce.Services.RankAccount;
 using Ecommerce.Services.TableService;
 using Ecommerce.Services.Vaild;
+using Ecommerce.Services.VnPayService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -191,6 +192,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IDiscountService, DiscountService>();
             builder.Services.AddScoped<IDiscountCustomerService, DiscountCustomerService>();
+            builder.Services.AddScoped<IVnPayService, VnPayService>();
 
             //== Singleton Pattern ==
             builder.Services.AddSingleton<IMailService, MailService>();

@@ -90,5 +90,14 @@ namespace Ecommerce.Repositories.DiscountRepository
             return true;
         }
 
+        //Lấy thông tin mã giảm giá mà user có\
+        public async Task<Discount_Customer?> GetDiscountByUserId(string userId, string discountId)
+        {
+            var discount_customer = await context.Discount_Customers.FirstOrDefaultAsync(dc => dc.CustomerId == userId && dc.DiscountId == discountId);
+            if (discount_customer == null) return null;
+
+            return discount_customer;
+        } 
+
     }
 }

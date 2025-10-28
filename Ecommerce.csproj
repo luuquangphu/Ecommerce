@@ -26,8 +26,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="9.0.6" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Image\TableQR\" />
-  </ItemGroup>
-
 </Project>

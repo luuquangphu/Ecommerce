@@ -1,5 +1,4 @@
-﻿
-using Ecommerce.Data;
+﻿using Ecommerce.Data;
 using Ecommerce.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -76,6 +75,21 @@ namespace Ecommerce.Repositories.RankAccount
             var customerRank = await db.CustomerRanks.FindAsync(id);
             return customerRank;
         }
+
+        public async Task<int?> GetRankPointByUserIdAsync(string userId)
+        {
+            var customer = await db.Customers.FirstOrDefaultAsync(c => c.Id == userId);
+            if (customer == null)
+                return null; // hoặc throw exception tùy bạn
+
+            var rankPoint = await db.CustomerRanks
+                .Where(r => r.RankId == customer.RankId)
+                .Select(r => (int?)r.RankPoint)
+                .FirstOrDefaultAsync();
+
+            return rankPoint;
+        }
+
 
         public async Task<int> SelectLastestRank()
         {

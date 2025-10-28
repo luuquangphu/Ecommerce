@@ -89,6 +89,7 @@ namespace Ecommerce.Repositories.OrderRepository
                     .ThenInclude(d => d.FoodSize)
                         .ThenInclude(fs => fs.Menu)
                 .Include(o => o.Table)
+                .Include(o => o.Customer)
                 .Where(o => o.CustomerId == customerId &&
                     (o.PaymentStatus == "Chưa thanh toán" || o.PaymentStatus == "Yêu cầu thanh toán"))
                 .OrderByDescending(o => o.OrderDate)
@@ -101,6 +102,9 @@ namespace Ecommerce.Repositories.OrderRepository
                 OrderStatus = o.OrderStatus,
                 OrderDate = o.OrderDate,
                 PaymentStatus = o.PaymentStatus,
+                TableName = o.Table.TableName,
+                CustomerName = o.Customer.Name,
+                CustomerDiscout = o.Customer.CustomerRank.RankDiscount,
 
                 OrderDetail = o.OrderDetails.Select(d => new OrderDetailDTO
                 {

@@ -68,7 +68,7 @@ namespace Ecommerce.Services.TableService
             if (user == null)
                 return new QrResolveResult { IsValid = false, Message = "Không xác định được người dùng" };
 
-            var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = user.FindFirstValue("userId");
 
             //Kiểm tra bàn có tồn tại không
             var table = await tableRepository.GetById(result.TableId);
