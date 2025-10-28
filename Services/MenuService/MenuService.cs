@@ -19,7 +19,6 @@ namespace Ecommerce.Services.MenuService
             return await menuRepository.GetAll(search);
         }
 
-
         public async Task<MenuViewModel> GetById(int id)
         {
             return await menuRepository.GetById(id);
@@ -27,12 +26,12 @@ namespace Ecommerce.Services.MenuService
 
         public async Task<StatusDTO> Create(Menu model)
         {
-            // kiểm tra trùng tên
             var checkName = await menuRepository.ValidName(model.MenuName);
             if (!string.IsNullOrEmpty(checkName))
                 return new StatusDTO { IsSuccess = false, Message = checkName };
 
             await menuRepository.Create(model);
+
             return new StatusDTO
             {
                 IsSuccess = true,
@@ -45,7 +44,6 @@ namespace Ecommerce.Services.MenuService
             var checkName = await menuRepository.ValidName(model.MenuName);
             if (!string.IsNullOrEmpty(checkName))
             {
-                // Nếu trùng tên, cần đảm bảo món trùng đó không phải chính món đang cập nhật
                 var current = await menuRepository.GetById(model.MenuId);
                 if (current != null && current.MenuName != model.MenuName)
                     return new StatusDTO { IsSuccess = false, Message = "Tên món ăn bị trùng" };
@@ -72,5 +70,10 @@ namespace Ecommerce.Services.MenuService
                 Message = $"Xóa món {menu.MenuName} thành công"
             };
         }
+        public async Task<Menu?> GetEntityById(int id)
+        {
+            return await menuRepository.GetEntityById(id);
+        }
+
     }
 }

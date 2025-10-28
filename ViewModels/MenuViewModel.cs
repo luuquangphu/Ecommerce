@@ -13,5 +13,8 @@ namespace Ecommerce.ViewModels
         public string? Detail { get; set; }
 
         public string MenuCategoryName { get; set; }
+        // 👇 Thêm 2 dòng này:
+        public string? MainImageUrl { get; set; }          // ảnh chính hiển thị ở danh sách
+        public List<string>? ImageUrls { get; set; }
     }
 }

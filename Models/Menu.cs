@@ -24,5 +24,6 @@ namespace Ecommerce.Models
         public int MenuCategoryId { get; set; }
         [ValidateNever]
         public MenuCategory MenuCategory { get; set; }
+        public ICollection<FoodImage>? FoodImages { get; set; }
     }
 }

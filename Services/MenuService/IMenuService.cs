@@ -12,5 +12,7 @@ namespace Ecommerce.Services.MenuService
         Task<StatusDTO> Create(Menu model);
         Task<StatusDTO> Update(Menu model);
         Task<StatusDTO> Delete(int id);
+        Task<Menu?> GetEntityById(int id);
+
     }
 }
