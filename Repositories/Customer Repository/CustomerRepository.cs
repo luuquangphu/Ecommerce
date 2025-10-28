@@ -17,6 +17,7 @@ namespace Ecommerce.Repositories.CustomerRepository
         private readonly UserManager<Users> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IVaildService vaildService;
+       
 
         public CustomerRepository(AppDbContext db, UserManager<Users> userManager, IVaildService vaildService, RoleManager<IdentityRole> roleManager) 
         {
@@ -128,8 +129,6 @@ namespace Ecommerce.Repositories.CustomerRepository
                 customer.Email = model.Email;
                 customer.DateOfBirth = model.DateOfBirth;
                 customer.Gender = model.Gender;
-                
-
                 if (customer.Point != model.Point)
                 {
                     var rank = await db.CustomerRanks

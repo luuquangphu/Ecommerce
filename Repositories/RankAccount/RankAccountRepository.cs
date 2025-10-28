@@ -51,7 +51,7 @@ namespace Ecommerce.Repositories.RankAccount
 
                 foreach (var customer in customersInRank)
                 {
-
+                   
                     var newRank = otherRanks.LastOrDefault(r => r.RankPoint <= customer.Point);
 
                     customer.RankId = newRank?.RankId ?? otherRanks.First().RankId;

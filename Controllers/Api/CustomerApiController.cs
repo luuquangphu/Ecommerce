@@ -18,9 +18,8 @@ namespace Ecommerce.Controllers.Api
         {
             this.customerService = customerService;
         }
-
-        [HttpGet("GetAllCustomer")]
         [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllCustomer")]
         public async Task<IActionResult> GetAllCustomer(string? search = null)
         {
             var lstCustomer = await customerService.GetAll(search);

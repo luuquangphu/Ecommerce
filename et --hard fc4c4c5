@@ -1,0 +1,28 @@
+[33mfc4c4c5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mDinh[m[33m)[m Thêm [FromBody] vào sendOTP của AccountAPi
+[33maefa2fb[m[33m ([m[1;32mdev[m[33m)[m Thêm [FromBody] vào sendOTP của AccountAPi
+[33m5bd9886[m[33m ([m[1;31morigin/dev[m[33m)[m [Add] Chức năng hiển thị Menu cho khách hàng
+[33m63c7af5[m [Update] RankAccount
+[33m899bfa2[m [Pull] Fix confict branch Kha
+[33m9c26b78[m Save .csproj
+[33mbb7036e[m[33m ([m[1;31morigin/Kha[m[33m)[m [Done] discount
+[33m3b1b360[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31morigin/Dev[m[33m)[m [Add] Tạo đơn hàng, Cập nhật tiến độ đơn, Xác nhận giỏ hàng, Quản lý giỏ hàng
+[33m62eb649[m Cập nhật service foodsize
+[33m61836ef[m [Add] Chức năng xác nhận giỏ hàng, hiển thị đơn hàng (nhà hàng và người dùng), Cập nhật trạng thái đơn, Yêu cầu thanh toán
+[33ma51ed6c[m [Modifier] Customer GetAll và Update
+[33m2f61399[m Thêm search của các phần inventory
+[33m0950322[m Cập nhật code của các menu,foodsize các controller,service,repository
+[33m2baf035[m [Add] Quản lý giỏ hàng [Modifier] Customer Repository
+[33m93a7571[m [Add] Quản lý số lượng món ăn [Modifier] Thêm tag Authorize trong Api
+[33m803812d[m [Add] Quản lý biến thể món ăn
+[33mfcb8e19[m [Add] Chức năng quản lý món ăn
+[33ma2e2c15[m Merge branch 'master' of https://github.com/luuquangphu/Ecommerce
+[33m367c8c8[m [Modifier] JwtService, Menu Model
+[33m94baeaf[m Create README.md
+[33me43a107[m [Add] Chức năng tạo QR bàn, xác thực token trong QR và cập nhật thông tin bàn [Modifier] Thêm các valid số điện thoại khi đăng ký
+[33m51d8d8a[m [Add] Chức năng quản lý bàn [Modifier] CustomerRank Create/Update [FromFrom] -> [FromBody]
+[33m08e5f08[m [Add] Chức năng quản lý hạng của khách hàng
+[33m722346d[m [Add] Chức năng quản lý loại món ăn
+[33m0d7e4c1[m - [Add] chức năng quản lý nhân viên - [Update] Cập nhật code phía Customer và Account
+[33mb5c732d[m [Add] Account Function - Login/Logout/Register/SendOTP/ChangePassword
+[33m58d83c6[m Add project files.
+[33m0593d19[m Add .gitattributes and .gitignore.
