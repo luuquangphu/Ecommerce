@@ -1,4 +1,6 @@
-﻿namespace Ecommerce.DTO
+﻿using Ecommerce.Models;
+
+namespace Ecommerce.DTO
 {
     public class MenuOrderDTO
     {
@@ -13,6 +15,7 @@
         {
             public int MenuId { get; set; }
             public string MenuName { get; set; }
+            public MenuCategory MenuCategory { get; set; }
 
             public List<string>? Images { get; set; } = new();
             public List<FoodSizeDto> Variants { get; set; } = new();

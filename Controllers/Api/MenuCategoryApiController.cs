@@ -8,7 +8,6 @@ namespace Ecommerce.Controllers.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class MenuCategoryApiController : ControllerBase
     {
         private readonly IMenuCategoryService menuCategoryService;
@@ -19,6 +18,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> GetAll()
         {
             var items = await menuCategoryService.GetAllAsync();
@@ -26,6 +26,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var item = await menuCategoryService.GetByIdAsync(id);
@@ -36,6 +37,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] MenuCategory model)
         {
             if (!ModelState.IsValid)
@@ -46,6 +48,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromBody] MenuCategory model)
         {
             if (!ModelState.IsValid)
@@ -56,6 +59,7 @@ namespace Ecommerce.Controllers.Api
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await menuCategoryService.DeleteAsync(id);

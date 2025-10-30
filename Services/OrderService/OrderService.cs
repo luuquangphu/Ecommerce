@@ -259,11 +259,11 @@ namespace Ecommerce.Services.OrderService
             };
         }
 
-        public async Task<StatusDTO> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model)
+        public async Task<UpdateOrderDTO> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model)
         {
             var order = await orderRepository.GetById(model.OrderId);
             if (order == null)
-                return new StatusDTO { IsSuccess = false, Message = "Đơn hàng không tồn tại" };
+                return new UpdateOrderDTO { IsSuccess = false, Message = "Đơn hàng không tồn tại" };
 
             order.PaymentMethod = model.PaymentMethod;
             order.PaymentStatus = "Chờ xác nhận thanh toán";
@@ -276,11 +276,11 @@ namespace Ecommerce.Services.OrderService
             {
                 var discount = await discountRepository.GetById(model.DiscountId);
                 if (discount == null)
-                    return new StatusDTO { IsSuccess = false, Message = "Mã giảm giá không tồn tại" };
+                    return new UpdateOrderDTO { IsSuccess = false, Message = "Mã giảm giá không tồn tại" };
 
                 var discountCustomer = await discountRepository.GetDiscountByUserId(order.CustomerId, model.DiscountId);
                 if (discountCustomer == null)
-                    return new StatusDTO { IsSuccess = false, Message = "Người dùng không có mã giảm giá này" };
+                    return new UpdateOrderDTO { IsSuccess = false, Message = "Người dùng không có mã giảm giá này" };
 
                 discountCustomer.isUsed = true;
 
@@ -300,10 +300,12 @@ namespace Ecommerce.Services.OrderService
 
             await db.SaveChangesAsync();
 
-            return new StatusDTO
+            return new UpdateOrderDTO
             {
                 IsSuccess = true,
-                Message = "Cập nhật giá tiền và phương thức thanh toán thành công"
+                Message = "Cập nhật giá tiền và phương thức thanh toán thành công",
+                Total = total,
+                OrderId = order.OrderId,
             };
         }
 
@@ -338,5 +340,9 @@ namespace Ecommerce.Services.OrderService
             return finalTotal;
         }
 
+        public async Task<IEnumerable<Order>> GetCashOrdersAsync()
+        {
+            return await orderRepository.GetCashOrdersAsync();
+        }
     }
 }

@@ -95,5 +95,18 @@ namespace Ecommerce.Controllers.Api
             });
         }
 
+        [HttpGet("Summary/{cartId}")]
+        public async Task<IActionResult> GetCartSummary(int cartId)
+        {
+            var (distinctCount, totalPrice) = await cartService.GetCartSummaryAsync(cartId);
+
+            return Ok(new
+            {
+                CartId = cartId,
+                DistinctFoodCount = distinctCount,
+                TotalPrice = totalPrice
+            });
+        }
+
     }
 }

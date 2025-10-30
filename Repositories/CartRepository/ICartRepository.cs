@@ -13,5 +13,7 @@ namespace Ecommerce.Repositories.CartRepository
         Task<Cart> GetById(int id);
         Task<(int,decimal)> GetQuantityCartItem(string userId);
         Task<Cart?> GetActiveCartByUserIdAsync(string userId);
+
+        Task<(int distinctFoodCount, decimal totalPrice)> GetCartSummaryAsync(int cartId);
     }
 }

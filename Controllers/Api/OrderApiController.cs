@@ -104,5 +104,13 @@ namespace Ecommerce.Controllers.Api
 
             return Ok(result);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetOrdersPayByCash")]
+        public async Task<IActionResult> GetOrdersPayByCash()
+        {
+            var orders = await orderService.GetCashOrdersAsync();
+            return Ok(orders);
+        }
     }
 }

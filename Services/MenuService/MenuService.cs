@@ -74,9 +74,9 @@ namespace Ecommerce.Services.MenuService
             };
         }
 
-        public async Task<List<MenuDto>> GetAvailableMenusAsync()
+        public async Task<List<MenuDto>> GetAvailableMenusByCategoryAsync(int? categoryId = null)
         {
-            return await menuRepository.GetAvailableMenusAsync();
+            return await menuRepository.GetAvailableMenusByCategoryAsync(categoryId);
         }
     }
 }

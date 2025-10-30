@@ -14,6 +14,6 @@ namespace Ecommerce.Services.MenuService
         Task<StatusDTO> Update(Menu model);
         Task<StatusDTO> Delete(int id);
 
-        Task<List<MenuDto>> GetAvailableMenusAsync();
+        Task<List<MenuDto>> GetAvailableMenusByCategoryAsync(int? categoryId = null);
     }
 }

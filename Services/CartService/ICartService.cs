@@ -10,5 +10,6 @@ namespace Ecommerce.Services.CartService
         Task<StatusDTO> AddToCart(int foodsizeId, int cartId);
         Task<StatusDTO> RemoveToCart(int foodsizeId, int cartId);
         Task<(int quantity, decimal total)> GetQuantityCartItem(string userId);
+        Task<(int distinctFoodCount, decimal totalPrice)> GetCartSummaryAsync(int cartId);
     }
 }

@@ -22,5 +22,11 @@ namespace Ecommerce.Repositories.OrderRepository
 
         //Hàm để người dùng lấy danh sách đơn hàng cùng chi tiết đơn của họ
         Task<IEnumerable<OrderUserDTO>> GetOrdersByUserIdAsync(string customerId);
+
+        //Hàm cập nhật trạng thái thanh toán của đơn hàng sau khi thanh toán thành công
+        Task UpdatePaymentStatusOrderAsync(Order order);
+
+        //Hàm lấy danh sách đơn hàng trả bằng tiền mặt
+        Task<IEnumerable<Order>> GetCashOrdersAsync();
     }
 }

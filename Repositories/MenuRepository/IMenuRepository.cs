@@ -14,6 +14,6 @@ namespace Ecommerce.Repositories.MenuRepository
         Task Delete(int id);
 
         Task<string> ValidName(string name);
-        Task<List<MenuDto>> GetAvailableMenusAsync();
+        Task<List<MenuDto>> GetAvailableMenusByCategoryAsync(int? categoryId);
     }
 }

@@ -108,11 +108,12 @@ namespace Ecommerce.Controllers.Api
             return Ok(result);
         }
 
-        [HttpGet("GetAvailableMenus")]
+        [HttpGet("GetAvailableMenusByCategory")]
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetAvailableMenus()
+        public async Task<IActionResult> GetAvailableMenusByCategory([FromQuery] int? categoryId = null)
         {
-            var result = await menuService.GetAvailableMenusAsync();
+            var result = await menuService.GetAvailableMenusByCategoryAsync(categoryId);
+
             if (result == null || !result.Any())
                 return NotFound(new { message = "Không có món ăn khả dụng." });
 

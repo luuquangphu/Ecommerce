@@ -13,5 +13,6 @@ namespace Ecommerce.Services.TableService
 
         Task<StatusDTO> CreateQRTable(int tableId);
         Task<QrResolveResult> ValidTableToken(string token, ClaimsPrincipal user);
+
     }
 }

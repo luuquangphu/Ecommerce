@@ -30,6 +30,10 @@ namespace Ecommerce.Repositories.TableRepository
         public async Task Delete(int id)
         {
             var table = await GetById(id);
+            if (!string.IsNullOrEmpty(table.QRCodePath))
+            {
+                DeleteTableQrImage(table.QRCodePath);
+            }
             db.Tables.Remove(table);
             await db.SaveChangesAsync();
         }
@@ -54,10 +58,42 @@ namespace Ecommerce.Repositories.TableRepository
             table.TableStatus = model.TableStatus;
             table.NumberOfSeats = model.NumberOfSeats;
             if (model.TableStatus == "Trống")
+            {
                 table.OwnerTable = "";
-            table.OwnerTable = model.OwnerTable;
+                if (!string.IsNullOrEmpty(table.QRCodePath))
+                {
+                    DeleteTableQrImage(table.QRCodePath);
+                    table.QRCodePath = null;
+                }
+            }
+            else
+                table.OwnerTable = model.OwnerTable;
 
             await db.SaveChangesAsync();
+        }
+
+        private void DeleteTableQrImage(string relativePath)
+        {
+            try
+            {
+                var rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                var cleanPath = relativePath.TrimStart('/'); // bỏ dấu / ở đầu nếu có
+                var fullPath = Path.Combine(rootPath, cleanPath.Replace("/", Path.DirectorySeparatorChar.ToString()));
+
+                if (File.Exists(fullPath))
+                {
+                    File.Delete(fullPath);
+                    Console.WriteLine($"✅ Đã xóa QR Code: {fullPath}");
+                }
+                else
+                {
+                    Console.WriteLine($"⚠️ Không tìm thấy file QR Code tại: {fullPath}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi khi xóa QR Code: {ex.Message}");
+            }
         }
 
         public async Task UpdateTableOwner(string? userId, int tableId)
@@ -75,6 +111,12 @@ namespace Ecommerce.Repositories.TableRepository
             var check = await db.Tables.FirstOrDefaultAsync(t => t.TableName == tableName);
             if (check != null) return "Tên bàn bị trùng";
             return "";
+        }
+
+        public async Task UpdateTableQr(Table model)
+        {
+            db.Tables.Update(model);
+            await db.SaveChangesAsync();
         }
     }
 }

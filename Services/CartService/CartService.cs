@@ -69,5 +69,10 @@ namespace Ecommerce.Services.CartService
             var (quantity, total) = await cartRepository.GetQuantityCartItem(userId);
             return (quantity, total);
         }
+
+        public async Task<(int distinctFoodCount, decimal totalPrice)> GetCartSummaryAsync(int cartId)
+        {
+            return await cartRepository.GetCartSummaryAsync(cartId);
+        }
     }
 }

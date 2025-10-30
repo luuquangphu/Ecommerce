@@ -12,6 +12,7 @@ namespace Ecommerce.Repositories.TableRepository
 
         Task UpdateTableOwner(string? userId, int tableId);
         Task<string> ValidTableName(string tableName);
+        Task UpdateTableQr(Table model);
 
     }
 }

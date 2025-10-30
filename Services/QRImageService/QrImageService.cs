@@ -33,7 +33,7 @@ namespace Ecommerce.Services.QRImageService
             foreach (var old in oldFiles.Where(f => f != filePath))
                 File.Delete(old);
 
-            return $"/Image/TableQR/{fileName}";
+            return $"/Images/TableQR/{fileName}";
         }
 
     }

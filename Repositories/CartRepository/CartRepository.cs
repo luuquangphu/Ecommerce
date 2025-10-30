@@ -134,5 +134,22 @@ namespace Ecommerce.Repositories.CartRepository
 
         }
 
+        public async Task<(int distinctFoodCount, decimal totalPrice)> GetCartSummaryAsync(int cartId)
+        {
+            var query = db.Cart_Menus
+                .Include(cm => cm.FoodSize)
+                .Where(cm => cm.CartId == cartId);
+
+            var distinctFoodCount = await query
+                .Select(cm => cm.FoodSizeId)
+                .Distinct()
+                .CountAsync();
+
+            var totalPrice = await query
+                .SumAsync(cm => cm.FoodSize.Price * cm.Count);
+
+            return (distinctFoodCount, totalPrice);
+        }
+
     }
 }

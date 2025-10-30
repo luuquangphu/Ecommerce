@@ -51,7 +51,7 @@ namespace Ecommerce.Services.TableService
             var table = await tableRepository.GetById(tableId);
             table.QRCodePath = qrcodePath;
 
-            await tableRepository.Update(table);
+            await tableRepository.UpdateTableQr(table);
             return new StatusDTO { IsSuccess = true, Message = "Tạo QR bàn thành công" };
         }
 

@@ -12,6 +12,8 @@ namespace Ecommerce.Services.OrderService
         Task<StatusDTO> RequestPaymentAsync(int orderId);
         Task<IEnumerable<OrderDTO>> GetAllOrdersAsync();
         //Cập nhật giá tiền và phương thức thanh toán
-        Task<StatusDTO> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model);
+        Task<UpdateOrderDTO> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model);
+
+        Task<IEnumerable<Order>> GetCashOrdersAsync();
     }
 }

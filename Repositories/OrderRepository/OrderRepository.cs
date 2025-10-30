@@ -120,6 +120,18 @@ namespace Ecommerce.Repositories.OrderRepository
             return orderDtos;
         }
 
+        public async Task UpdatePaymentStatusOrderAsync(Order order)
+        {
+            db.Orders.Update(order);
+            await db.SaveChangesAsync();
+        }
 
+        public async Task<IEnumerable<Order>> GetCashOrdersAsync()
+        {
+            return await db.Orders
+                .Where(o => o.PaymentMethod == "Tiền mặt")
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
     }
 }
