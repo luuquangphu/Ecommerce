@@ -45,8 +45,8 @@ namespace Ecommerce.Controllers.Api
             return Ok(orders);
         }
 
-        // 🔹 [ADMIN/STAFF] Lấy chi tiết 1 đơn hàng theo ID
-        [Authorize(Roles = "Admin,Staff")]
+        // Lấy chi tiết 1 đơn hàng theo ID
+        [Authorize(Roles = "Admin,Staff,User")]
         [HttpGet("GetOrderDetails/{orderId}")]
         public async Task<IActionResult> GetOrderDetails(int orderId)
         {
@@ -110,6 +110,14 @@ namespace Ecommerce.Controllers.Api
         public async Task<IActionResult> GetOrdersPayByCash()
         {
             var orders = await orderService.GetCashOrdersAsync();
+            return Ok(orders);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetOrderHasPayment")]
+        public async Task<IActionResult> GetOrderHasPayment()
+        {
+            var orders = await orderService.GetOrderHasPayment();
             return Ok(orders);
         }
     }

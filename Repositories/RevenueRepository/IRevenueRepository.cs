@@ -8,5 +8,7 @@ namespace Ecommerce.Repositories.RevenueRepository
         Task UpdateRevenueAsync(Revenue revenue);
         Task<int> CheckRevenue();
         Task addRevenue_Orders(int orderId, int revenueId);
+        Task<IEnumerable<Revenue>> GetAllRevenues();
+        Task<object> GetNumberOfUserandRevenueOfDay();
     }
 }

@@ -14,6 +14,7 @@ using Ecommerce.Repositories.MenuRepository;
 using Ecommerce.Repositories.OrderRepository;
 using Ecommerce.Repositories.OTP;
 using Ecommerce.Repositories.RankAccount;
+using Ecommerce.Repositories.RevenueRepository;
 using Ecommerce.Repositories.TableRepository;
 using Ecommerce.Services;
 using Ecommerce.Services.Account;
@@ -31,6 +32,7 @@ using Ecommerce.Services.MenuService;
 using Ecommerce.Services.OrderService;
 using Ecommerce.Services.QRImageService;
 using Ecommerce.Services.RankAccount;
+using Ecommerce.Services.RevenueService;
 using Ecommerce.Services.TableService;
 using Ecommerce.Services.Vaild;
 using Ecommerce.Services.VnPayService;
@@ -174,6 +176,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
             builder.Services.AddScoped<IDiscountCustomerRepository, DiscountCustomerRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IRevenueRepository, RevenueRepository>();
 
             //== Services ==
             builder.Services.AddScoped<IVaildService, VaildService>();
@@ -193,6 +196,7 @@ namespace Ecommerce
             builder.Services.AddScoped<IDiscountService, DiscountService>();
             builder.Services.AddScoped<IDiscountCustomerService, DiscountCustomerService>();
             builder.Services.AddScoped<IVnPayService, VnPayService>();
+            builder.Services.AddScoped<IRevenueService, RevenueService>();
 
             //== Singleton Pattern ==
             builder.Services.AddSingleton<IMailService, MailService>();

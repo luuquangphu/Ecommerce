@@ -15,5 +15,6 @@ namespace Ecommerce.Services.OrderService
         Task<UpdateOrderDTO> UpdatePaymentMethodandTotal(ConfirmPaymentDTO model);
 
         Task<IEnumerable<Order>> GetCashOrdersAsync();
+        Task<IEnumerable<Order>> GetOrderHasPayment();
     }
 }

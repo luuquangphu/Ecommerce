@@ -61,5 +61,25 @@ namespace Ecommerce.Repositories.RevenueRepository
             db.Revenue_Orders.Add(item);
             await db.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Revenue>> GetAllRevenues()
+        {
+            return await db.Revenues.ToListAsync();
+        }
+
+        public async Task<object> GetNumberOfUserandRevenueOfDay()
+        {
+            int NumberOfCustomser = db.Customers.Count();
+            int NumberOfEmployee = db.Employees.Count();
+            var today = DateTime.Today;
+            decimal TotalOfOrderInDay = await db.Revenues.Where(r => r.Date.Date == today).Select(r => r.TotalAmount).FirstOrDefaultAsync();
+
+            return new
+            {
+                NumberOfCustomser,
+                NumberOfEmployee,
+                TotalOfOrderInDay,
+            };
+        }
     }
 }

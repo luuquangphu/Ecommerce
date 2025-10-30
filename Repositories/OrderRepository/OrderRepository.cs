@@ -133,5 +133,11 @@ namespace Ecommerce.Repositories.OrderRepository
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Order>> GetOrderHasPayment()
+        {
+            return await db.Orders.Where(o => o.PaymentStatus == "Đã thanh toán" &&
+                                o.OrderStatus == "Hoàn thành").ToListAsync();                     
+        }
     }
 }

@@ -28,5 +28,8 @@ namespace Ecommerce.Repositories.OrderRepository
 
         //Hàm lấy danh sách đơn hàng trả bằng tiền mặt
         Task<IEnumerable<Order>> GetCashOrdersAsync();
+
+        //Hàm lấy danh sách lịch sử đơn hàng đã thanh toán
+        Task<IEnumerable<Order>> GetOrderHasPayment();
     }
 }

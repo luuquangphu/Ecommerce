@@ -35,6 +35,11 @@ namespace Ecommerce.Services.OrderService
             this.rankAccountRepository = rankAccountRepository;
         }
 
+        public async Task<IEnumerable<Order>> GetOrderHasPayment()
+        {
+            return await orderRepository.GetOrderHasPayment();
+        }
+
         public async Task<StatusDTO> CreateOrderAsync(string userId)
         {
             var cart = await cartRepository.GetActiveCartByUserIdAsync(userId);
