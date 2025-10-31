@@ -29,8 +29,8 @@ namespace Ecommerce.Services.VnPayService
             vnpay.AddRequestData("vnp_OrderInfo", $"Thanh toan don hang {model.OrderId}");
             vnpay.AddRequestData("vnp_OrderType", "other");
             vnpay.AddRequestData("vnp_ReturnUrl", _config["VnPay:PaymentBackReturnUrl"]);
-
-            vnpay.AddRequestData("vnp_TxnRef", model.OrderId);
+            string orderIdStr = $"{model.OrderId}";
+            vnpay.AddRequestData("vnp_TxnRef", orderIdStr);
 
             var paymentUrl = vnpay.CreateRequestUrl(_config["VnPay:BaseUrl"], _config["VnPay:HashSecret"]);
 
@@ -69,7 +69,7 @@ namespace Ecommerce.Services.VnPayService
                 Success = true,
                 PaymentMethod = "VnPay",
                 OrderDescription = vnp_OrderInfo,
-                OrderId = vnp_orderId,
+                OrderId = int.Parse(vnp_orderId),
                 TransactionId = vnp_TransactionId.ToString(),
                 Token = vnp_SecureHash,
                 VnPayResponseCode = vnp_ResponseCode
